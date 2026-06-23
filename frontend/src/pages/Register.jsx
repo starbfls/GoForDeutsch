@@ -4,8 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -46,33 +47,31 @@ export default function Register() {
   const strengthColor = ["", "bg-red-400", "bg-amber-400", "bg-teal-500"][strength];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-      {/* Logo */}
-      <Link to="/" className="mb-8 flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
-        <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
-          <Globe className="h-4 w-4 text-white" />
-        </div>
-        <span className="font-bold text-lg">GoForDeutsch</span>
-      </Link>
-
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center pb-2">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
-            <Sparkles className="h-6 w-6 text-primary" />
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <Card className="w-full max-w-sm shadow-lg">
+        <CardContent className="pt-8 pb-8 px-8">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <Link to="/">
+              <img
+                src={logo}
+                alt="GoForDeutsch"
+                className="h-20 w-auto object-contain hover:opacity-85 transition-opacity"
+              />
+            </Link>
           </div>
-          <CardTitle className="text-2xl">Create your account</CardTitle>
-          <CardDescription>
-            Just choose a password — we&apos;ll give you a quirky German username!
-          </CardDescription>
-        </CardHeader>
 
-        <CardContent className="pt-4">
-          {/* Username info callout */}
-          <div className="mb-5 rounded-xl bg-primary/8 border border-primary/20 px-4 py-3 text-sm text-primary">
-            <p className="font-medium mb-0.5">Your username will be auto-generated</p>
-            <p className="text-primary/70 text-xs">
-              Examples: KatzeSpringt · ApfelRollt · BrotFliegt
-            </p>
+          <h1 className="text-center text-xl font-bold text-foreground mb-1">
+            Create your account
+          </h1>
+          <p className="text-center text-sm text-muted-foreground mb-6">
+            Choose a password — we&apos;ll generate your German username!
+          </p>
+
+          {/* Username hint */}
+          <div className="mb-5 rounded-xl bg-primary/10 border border-primary/20 px-4 py-3 text-sm">
+            <p className="font-medium text-primary mb-0.5">Auto-generated username</p>
+            <p className="text-primary/70 text-xs">e.g. KatzeSpringt · ApfelRollt · BrotFliegt</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -83,7 +82,7 @@ export default function Register() {
               </div>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
@@ -94,6 +93,7 @@ export default function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="new-password"
+                  autoFocus
                   className="pr-10"
                 />
                 <button
@@ -105,7 +105,6 @@ export default function Register() {
                   {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {/* Strength bar */}
               {password.length > 0 && (
                 <div className="space-y-1">
                   <div className="flex gap-1">
@@ -123,7 +122,7 @@ export default function Register() {
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="confirm">Confirm Password</Label>
               <Input
                 id="confirm"
@@ -136,7 +135,7 @@ export default function Register() {
               />
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            <Button type="submit" className="w-full mt-2" size="lg" disabled={loading}>
               {loading ? "Generating your account…" : "Generate my Account"}
             </Button>
           </form>
