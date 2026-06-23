@@ -58,35 +58,3 @@ npm install
 
 # Start the dev server
 npm run dev
-```
-
-The app will open at **http://localhost:5173**
-
----
-
-## API Endpoints
-
-| Method | Endpoint         | Description                            |
-|--------|------------------|----------------------------------------|
-| POST   | `/auth/register` | Register with a password → returns generated username + JWT |
-| POST   | `/auth/login`    | Login with username + password → returns JWT |
-| GET    | `/auth/me`       | Get current user info (requires token) |
-| GET    | `/health`        | Health check                           |
-
----
-
-## Environment Variables (optional)
-
-Copy `.env.example` to `.env` in the `backend/` folder to override defaults:
-
-```
-SECRET_KEY=your-super-secret-key-here
-```
-
----
-
-## Development Notes
-
-- `data/users.json` is auto-created on first run and is gitignored — do not commit it in production.
-- The frontend runs on port **5173** and the backend on **8000**. CORS is pre-configured for this setup.
-- Phase 2 will add Gemini API integration — store the API key in `backend/.env`.
