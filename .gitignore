@@ -14,6 +14,11 @@ __pycache__/
 
 # Data (do not commit user data)
 backend/data/users.json
+backend/data/
+backend/.env
+.env
+.venv/
+artifacts/
 
 # Node
 node_modules/
@@ -27,3 +32,6 @@ npm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Isolated local browser QA
+backend/.qa-data/

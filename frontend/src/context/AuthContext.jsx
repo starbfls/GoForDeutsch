@@ -8,12 +8,23 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-    if (token && username) {
-      setUser({ token, username });
-    }
-    setLoading(false);
+    let active = true;
+    const restore = async () => {
+      if (localStorage.getItem("token")) {
+        try {
+          const { data } = await authApi.me();
+          if (active) setUser({ token: localStorage.getItem("token"), username: data.username });
+        } catch (err) {
+          if (err.response?.status === 401 || err.response?.status === 404) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+          }
+        }
+      }
+      if (active) setLoading(false);
+    };
+    restore();
+    return () => { active = false; };
   }, []);
 
   const login = async (username, password) => {
@@ -45,6 +56,8 @@ export function AuthProvider({ children }) {
   );
 }
 
+// This hook intentionally shares the context module with its provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside AuthProvider");

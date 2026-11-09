@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Brain, Sparkles, Upload, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import logo from "@/assets/logo.png";
 import bgImage from "@/assets/background.png";
 

@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Header, HTTPException, status
 
 from app.auth import create_access_token, hash_password, verify_password
 from app.database import db
@@ -40,12 +40,15 @@ def login(body: UserLogin):
 
 
 @router.get("/me", response_model=UserPublic)
-def get_me(token: str):
+def get_me(token: str | None = None, authorization: str | None = Header(default=None)):
     from app.auth import decode_access_token
     import jwt
 
     try:
-        payload = decode_access_token(token)
+        credential = authorization.removeprefix("Bearer ") if authorization else token
+        if not credential:
+            raise HTTPException(status_code=401, detail="Missing token")
+        payload = decode_access_token(credential)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
     except jwt.InvalidTokenError:

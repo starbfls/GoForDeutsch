@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
 import {
   Upload,
   Map,
   Settings,
   LogOut,
-  Sparkles,
   BookOpen,
   ChevronRight,
-  Trophy,
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -94,7 +91,7 @@ export default function Dashboard() {
 
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-1 pt-4">
-          {navItems.map(({ icon: Icon, label, emoji, href, soon }) => (
+          {navItems.map(({ label, emoji, href, soon }) => (
             <a
               key={label}
               href={href}
