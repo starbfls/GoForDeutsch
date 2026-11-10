@@ -27,3 +27,29 @@ Use case: illustration-story. Asset type: background for a playable 2D browser G
 ### Bakery
 
 Use case: illustration-story. Asset type: interactive scene background for 2D German-learning adventure website. Wide landscape 3:2 hand-painted anime game background of a cozy German village bakery interior, warm cream and golden apricot daylight, sage green trim, terracotta floor, red-and-cream striped outside awning visible through window. Front view of a wooden bakery counter across lower-middle frame, baskets of bread rolls, loaves, pretzels and croissants, tasteful chalkboard with no writing, shelves, window with foliage. Leave middle counter surface clean for interactive product buttons to be overlaid. Left third will have a character portrait placed over it, so keep that region relatively quiet. Gentle painterly texture, crisp appealing shapes, warm storybook visual novel quality suitable for ages10–15. No people, no text, no prices, no UI, no letters, no watermark.
+
+## 2026-11-10: school, park and three extra expressions
+
+Built-in image generation produced `frontend/public/assets/school.png`, `park.png` and `mia-extra.png`. Prompts are saved in [asset-prompts-v2.json](asset-prompts-v2.json).
+
+School and park use restrained watercolor/gouache, pencil lines, paper texture, coherent perspective and less decorative clutter. These are generated illustrations, not represented as human-made artwork.
+
+The supplementary atlas has three columns in one row: wink, surprised discovery, proud/relieved smile. It is composited through CSS with a short entrance fade. The alpha channel and actual scene compositing were checked. Existing six expressions remain available.
+
+The supplied additional gallery URL returned HTTP 403 to automated reading. Identity was therefore kept consistent with the user's earlier reference images and the already established Mia atlas; no claim is made that the blocked gallery was fully inspected.
+
+
+## 2026-11-10: Kennenlernen UI redesign
+
+Generated with the built-in image generation tool; no runtime image API key is needed. Full generation briefs and reference constraints: [asset-prompts-ui3.json](asset-prompts-ui3.json).
+
+| Asset in frontend/public/assets | Use |
+| --- | --- |
+| town-unit1.png | Larger town map, displayed through a moving camera |
+| bakery-unit1.png | Matching bakery interior |
+| park-unit1.png | Matching pond, bench and picnic area |
+| school-unit1.png | Matching classroom |
+| mia-expressions-v3.png | ONE transparent 3-column, 2-row atlas: wink / surprised / proud; ponder / focus / empty |
+| mia-idle.png | Two matching neutral portraits: eyes open / eyes closed |
+
+The new atlas replaces the previous supplemental atlas at runtime and includes two thinking expressions. The original six-expression atlas remains available. Default idle portraits alternate briefly for a blink at random intervals; there is no continuous breathing or floating motion. Expressions fade briefly when changed. All runtime references use D-drive project assets. Temporary C-drive generation outputs for this redesign were removed after copying at the user's request.

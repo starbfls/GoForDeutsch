@@ -1,0 +1,224 @@
+.auth-world {
+  min-height: 100dvh;
+  background:
+    linear-gradient(90deg, #eef3e8ed, #fafbf6ef),
+    url("/assets/town-unit1.png") center/cover fixed;
+}
+.auth-back {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #355b40;
+  text-decoration: none;
+  font-size: 17px;
+}
+.auth-layout {
+  min-height: 100dvh;
+  max-width: 1080px;
+  padding: 80px 40px 45px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 430px;
+  gap: 75px;
+  align-items: center;
+}
+.auth-story {
+  text-align: center;
+}
+.auth-story .eyebrow {
+  font-size: 19px;
+  color: #31553c;
+  font-weight: 600;
+}
+.auth-story h1 {
+  font-size: 33px;
+  font-weight: 700;
+  margin: 14px 0;
+  line-height: 1.4;
+}
+.auth-story > p {
+  color: #405e41;
+  font-size: 19px;
+}
+.auth-story > .mia-portrait {
+  width: 255px;
+  margin: 30px auto 0;
+}
+.auth-card {
+  padding: 32px;
+  border: 1px solid #cedbc7;
+  border-radius: 15px;
+  background: #fffefaed;
+  box-shadow: 0 6px 30px #28442b09;
+}
+.auth-leaf {
+  display: none;
+}
+.auth-card > .eyebrow {
+  font-size: 17px;
+  color: #45693e;
+  font-weight: 600;
+}
+.auth-card h2 {
+  font-size: 29px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+.auth-card > p {
+  font-size: 17px;
+  color: #495e45;
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+.auth-card label {
+  display: block;
+  color: #2a4a32;
+  font-size: 17px;
+  margin-bottom: 19px;
+}
+.auth-card input {
+  display: block;
+  width: 100%;
+  border: 1px solid #aabb9f;
+  border-radius: 7px;
+  padding: 12px;
+  margin-top: 8px;
+  background: #fafcf5;
+  color: #233c28;
+  font-size: 19px;
+}
+.auth-card input::placeholder {
+  color: #63775b;
+  font-size: 16px;
+}
+.auth-card input:focus {
+  outline: 2px solid #759567;
+  outline-offset: 2px;
+}
+.password-field {
+  position: relative;
+}
+.password-field input {
+  padding-right: 42px;
+}
+.password-field button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #4d6c41;
+}
+.auth-card form > .primary-button {
+  width: 100%;
+  margin-top: 5px;
+}
+.auth-error {
+  padding: 13px;
+  border: 1px solid #c7a779;
+  border-radius: 7px;
+  background: #fff2de;
+  color: #754f22;
+  font-size: 17px;
+  line-height: 1.8;
+  margin-bottom: 18px;
+}
+.auth-note {
+  font-size: 16px;
+  color: #526a48;
+  margin-top: 18px;
+  line-height: 1.8;
+}
+.auth-switch {
+  margin-top: 22px;
+  font-size: 17px;
+  color: #435d3f;
+  text-align: center;
+}
+.auth-switch a {
+  margin-left: 10px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.auth-guest {
+  display: block;
+  text-align: center;
+  font-size: 17px;
+  color: #426039;
+  margin-top: 18px;
+}
+.generated-username {
+  padding: 22px 15px;
+  border: 1px dashed #94ac83;
+  border-radius: 10px;
+  background: #edf3e3;
+  text-align: center;
+  margin: 22px 0 15px;
+}
+.generated-username small {
+  font-size: 17px;
+  display: block;
+  color: #45623d;
+  margin-bottom: 10px;
+}
+.generated-username strong {
+  font-size: 28px;
+  color: #2d532c;
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+.copy-username,
+.welcome-continue {
+  width: 100%;
+}
+.welcome-continue {
+  margin-top: 22px;
+}
+.copy-status {
+  min-height: 26px;
+  margin: 10px 0 0 !important;
+  font-size: 16px !important;
+}
+.auth-restoring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 200px;
+}
+@media (max-width: 760px) {
+  .auth-layout {
+    grid-template-columns: minmax(0, 440px);
+    justify-content: center;
+    gap: 24px;
+    padding: 85px 20px 35px;
+  }
+  .auth-story h1 {
+    font-size: 28px;
+  }
+  .auth-story > .mia-portrait {
+    width: 115px;
+    margin-top: 15px;
+  }
+  .auth-story .eyebrow,
+  .auth-story > p {
+    display: none;
+  }
+  .auth-card {
+    padding: 26px 22px;
+  }
+  .auth-back {
+    left: 23px;
+    top: 23px;
+  }
+  .auth-card h2 {
+    font-size: 27px;
+  }
+}

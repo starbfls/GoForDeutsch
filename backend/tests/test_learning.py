@@ -96,9 +96,9 @@ class LearningFlowTests(unittest.TestCase):
     def test_all_three_missions_complete(self):
         for mission in MISSIONS:
             result = self.finish(self.begin(mission["id"]))
-        self.assertEqual(result["progress"]["xp"], 150)
-        self.assertEqual(len(result["progress"]["completed"]), 3)
-        self.assertEqual(len(result["progress"]["evidence"]), 9)
+        self.assertEqual(result["progress"]["xp"], sum(m["xp"] for m in MISSIONS))
+        self.assertEqual(len(result["progress"]["completed"]), len(MISSIONS))
+        self.assertEqual(len(result["progress"]["evidence"]), sum(len(m["steps"]) for m in MISSIONS))
 
     def test_concurrent_global_api_budget_never_exceeds_limit(self):
         with ThreadPoolExecutor(max_workers=8) as pool:

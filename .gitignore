@@ -1,37 +1,44 @@
-# Python
+# Environment files and secrets (at every directory level)
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.template
+
+# Dependencies and Python bytecode
+node_modules/
 venv/
+.venv/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 .Python
 *.egg-info/
 
-# Environment & secrets
-.env
-.env.local
-.env.*.local
+# Local verification output, screenshots and browser profiles
+/artifacts/
 
-# Data (do not commit user data)
-backend/data/users.json
-backend/data/
-backend/.env
-.env
-.venv/
-artifacts/
-
-# Node
-node_modules/
-frontend/dist/
-frontend/.vite/
-
-# Logs
+# Logs and temporary files
+logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
 
-# OS
+# Local editor and assistant preferences
+.idea/
+**/.vscode/*
+!**/.vscode/extensions.json
+.claude/settings.local.json
+
+# Operating system metadata
 .DS_Store
 Thumbs.db
-
-# Isolated local browser QA
-backend/.qa-data/
+Desktop.ini

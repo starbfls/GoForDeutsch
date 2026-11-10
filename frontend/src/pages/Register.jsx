@@ -1,2 +1,5 @@
-import AuthScreen from "./AuthScreen";
-export default function Register() { return <AuthScreen register />; }
+import AuthPage from "@/features/auth/AuthPage";
+
+export default function Register() {
+  return <AuthPage mode="register" />;
+}

@@ -1,0 +1,356 @@
+@media (min-width: 1750px) {
+  .adventure-content {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+  .lesson-scene {
+    min-height: 700px;
+  }
+  .lesson-mia .mia-portrait {
+    width: 340px;
+  }
+}
+@media (max-width: 1150px) {
+  .adventure-sidebar {
+    width: 180px;
+    padding: 25px 12px;
+  }
+  .adventure-main {
+    margin-left: 180px;
+  }
+  .brand {
+    font-size: 16px;
+    gap: 8px;
+  }
+  .brand strong {
+    font-size: 21px;
+  }
+  .brand-mark {
+    width: 38px;
+    height: 44px;
+  }
+  .adventure-content {
+    padding: 24px;
+  }
+  .adventure-topbar {
+    padding: 0 24px;
+  }
+  .today-panel {
+    width: 270px;
+  }
+  .lesson-layout {
+    gap: 18px;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr);
+  }
+  .exercise-panel {
+    padding: 23px;
+  }
+  .lesson-mia .mia-portrait {
+    width: 250px;
+  }
+  .dialogue-box {
+    padding: 17px;
+  }
+  .dialogue-box > p {
+    font-size: 17px;
+  }
+}
+@media (max-width: 950px) {
+  .adventure-sidebar {
+    width: 82px;
+    padding: 22px 10px;
+  }
+  .brand {
+    justify-content: center;
+    padding: 0;
+  }
+  .brand > span:last-child,
+  .unit-progress,
+  .nav-item > span {
+    display: none;
+  }
+  .adventure-sidebar nav {
+    margin-top: 35px;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 14px 7px;
+  }
+  .adventure-main {
+    margin-left: 82px;
+  }
+  .page-heading h1 {
+    font-size: 31px;
+  }
+  .topbar-right {
+    gap: 18px;
+  }
+  .map-mia .mia-portrait {
+    width: 145px;
+  }
+  .lesson-layout {
+    grid-template-columns: 1fr;
+  }
+  .lesson-scene {
+    min-height: 440px;
+  }
+  .lesson-mia {
+    left: 30%;
+    bottom: 100px;
+  }
+  .lesson-mia .mia-portrait {
+    width: 220px;
+  }
+  .exercise-panel {
+    min-height: 440px;
+  }
+  .dialogue-box {
+    min-height: 105px;
+  }
+  .toast {
+    left: calc(50% + 40px);
+  }
+}
+@media (max-width: 650px) {
+  .adventure-sidebar {
+    position: fixed;
+    inset: auto 0 0;
+    width: 100%;
+    height: 72px;
+    padding: 0 10px;
+    background: #f4f7eff5;
+    border-top: 1px solid #d1dccb;
+    border-right: 0;
+    backdrop-filter: blur(10px);
+  }
+  .adventure-sidebar .brand,
+  .sidebar-bottom {
+    display: none;
+  }
+  .adventure-sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    gap: 3px;
+    height: 100%;
+    align-items: center;
+  }
+  .nav-item {
+    min-height: 60px;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px 3px;
+    border-radius: 7px;
+    font-size: 13px;
+  }
+  .nav-item > span {
+    display: block;
+  }
+  .nav-item svg {
+    width: 21px;
+    height: 21px;
+  }
+  .adventure-main {
+    margin-left: 0;
+  }
+  .adventure-topbar {
+    height: 60px;
+    padding: 0 18px;
+  }
+  .current-section {
+    font-size: 16px;
+  }
+  .topbar-right {
+    gap: 12px;
+  }
+  .xp-pill {
+    font-size: 14px;
+  }
+  .profile-button {
+    font-size: 15px;
+  }
+  .profile-button > span {
+    max-width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .settings-icon {
+    padding: 4px;
+  }
+  .adventure-content {
+    padding: 22px 18px 100px;
+  }
+  .page-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .page-heading h1 {
+    font-size: 30px;
+  }
+  .unit-selector {
+    font-size: 14px;
+    gap: 8px;
+  }
+  .unit-selector select {
+    font-size: 14px;
+    padding: 5px 8px;
+    max-width: 220px;
+  }
+  .scene-tabs {
+    gap: 7px;
+    margin-bottom: 13px;
+  }
+  .scene-tabs > button {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 16px;
+    gap: 5px;
+  }
+  .scene-tabs > button > span:first-child {
+    display: none;
+  }
+  .scene-count {
+    font-size: 14px;
+    margin-left: 3px;
+  }
+  .town-stage {
+    height: calc(100dvh - 330px);
+    min-height: 440px;
+    border-radius: 11px;
+  }
+  .map-mia {
+    left: 5px;
+    bottom: 0;
+  }
+  .map-mia .mia-portrait {
+    width: 105px;
+  }
+  .today-panel {
+    width: 235px;
+    bottom: 15px;
+    right: 12px;
+    padding: 17px;
+  }
+  .today-panel h2 {
+    font-size: 25px;
+  }
+  .today-panel > p {
+    font-size: 17px;
+    margin: 6px 0 13px;
+  }
+  .today-panel .primary-button {
+    padding: 10px 12px;
+    font-size: 17px;
+    min-height: 46px;
+  }
+  .map-pin {
+    padding: 9px 13px;
+    font-size: 16px;
+  }
+  .lesson-scene {
+    min-height: 385px;
+  }
+  .lesson-mia {
+    left: 35%;
+    bottom: 90px;
+  }
+  .lesson-mia .mia-portrait {
+    width: 185px;
+  }
+  .dialogue-box {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-height: 95px;
+    padding: 13px 16px;
+  }
+  .dialogue-box > p {
+    font-size: 17px;
+  }
+  .lesson-toolbar {
+    margin-bottom: 13px;
+    font-size: 16px;
+  }
+  .exercise-panel {
+    padding: 21px 18px;
+  }
+  .exercise-panel h2 {
+    font-size: 21px;
+  }
+  .german-prompt {
+    font-size: 21px;
+    margin: 18px 0;
+    padding: 13px;
+  }
+  .choice-option {
+    gap: 12px;
+    padding: 14px;
+  }
+  .choice-option.selected {
+    padding: 13px;
+  }
+  .choice-option strong {
+    font-size: 19px;
+  }
+  .choice-option small {
+    font-size: 16px;
+  }
+  .option-emoji {
+    font-size: 28px;
+    width: 33px;
+  }
+  .hint-actions > button {
+    font-size: 16px;
+  }
+  .umlaut-keys > span {
+    display: none;
+  }
+  .mission-card {
+    gap: 12px;
+    padding: 16px 13px;
+  }
+  .mission-card strong {
+    font-size: 18px;
+  }
+  .mission-number {
+    font-size: 16px;
+    width: 23px;
+  }
+  .mission-status {
+    font-size: 14px;
+  }
+  .mission-card > svg {
+    width: 16px;
+  }
+  .record-section {
+    padding: 18px;
+  }
+  .evidence-row {
+    flex-wrap: wrap;
+    gap: 5px 12px;
+  }
+  .evidence-row strong {
+    font-size: 18px;
+  }
+  .evidence-row > span {
+    font-size: 16px;
+  }
+  .toast {
+    left: 50%;
+    bottom: 88px;
+    width: calc(100vw - 28px);
+    font-size: 16px;
+  }
+  .completion {
+    padding: 50px 20px;
+  }
+  .completion h2 {
+    font-size: 30px;
+  }
+  .scene-transition strong {
+    font-size: 33px;
+  }
+}

@@ -65,6 +65,10 @@ class LearningStore:
         with self.connection() as db:
             return {row["mission"]: json.loads(row["state"]) for row in db.execute("SELECT mission,state FROM results WHERE learner=?", (learner,))}
 
+    def active_missions(self, learner):
+        with self.connection() as db:
+            return {row["mission"] for row in db.execute("SELECT mission,state FROM runs WHERE learner=?",(learner,)) if not json.loads(row["state"])["completed"]}
+
     def reserve_api_call(self, limit):
         day = datetime.now(timezone.utc).date().isoformat()
         with self.connection() as db:

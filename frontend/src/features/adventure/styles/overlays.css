@@ -1,0 +1,141 @@
+.toast {
+  position: fixed;
+  bottom: 26px;
+  left: calc(50% + 90px);
+  transform: translateX(-50%);
+  max-width: min(650px, 90vw);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid #bfceb7;
+  border-radius: 10px;
+  background: #fffef7;
+  box-shadow: 0 6px 28px #20392b20;
+  padding: 16px 20px;
+  color: #2d4a33;
+  font-size: 17px;
+}
+.toast button {
+  border: 0;
+  background: transparent;
+  padding: 5px;
+  color: #4d6750;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #203c2e66;
+  backdrop-filter: blur(5px);
+}
+.settings-modal {
+  position: relative;
+  width: 440px;
+  max-width: 100%;
+  padding: 32px;
+  border-radius: 15px;
+  background: #fafcf5;
+  color: #233e2b;
+}
+.settings-modal h2 {
+  font-size: 29px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+.modal-close {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  border: 0;
+  background: transparent;
+  padding: 8px;
+}
+.motion-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  font-size: 18px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #d5e0cd;
+}
+.motion-toggle strong {
+  font-weight: 500;
+}
+.motion-toggle input {
+  width: 22px;
+  height: 22px;
+  accent-color: #315c47;
+}
+.settings-info {
+  margin: 24px 0;
+  color: #496443;
+  font-size: 17px;
+}
+.settings-info strong {
+  font-weight: 500;
+}
+.scene-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7f1f5;
+  backdrop-filter: blur(14px);
+  color: #2c4d37;
+}
+.scene-transition strong {
+  font-size: 40px;
+  font-weight: 700;
+}
+.scene-transition p {
+  font-size: 22px;
+  margin-top: 8px;
+}
+.transition-track {
+  width: 140px;
+  height: 3px;
+  margin-top: 25px;
+  background: #d2dfc9;
+  overflow: hidden;
+}
+.transition-track i {
+  display: block;
+  width: 55%;
+  height: 100%;
+  background: #75976a;
+  animation: travel 1s ease-in-out infinite;
+}
+@keyframes travel {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(280%);
+  }
+}
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.reduce-motion .map-world {
+  will-change: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .adventure-app *,
+  .adventure-app *::before,
+  .adventure-app *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -30,4 +30,10 @@ export const learningApi = {
   turn: (data) => api.post("/learning/turn", data),
 };
 
+export const flashcardApi = {
+  library: () => api.get("/flashcards"),
+  review: (card_id, rating, review_id) => api.post("/flashcards/review", { card_id, rating, review_id }),
+  favorite: (card_id, favorite) => api.post("/flashcards/favorite", { card_id, favorite }),
+};
+
 export default api;

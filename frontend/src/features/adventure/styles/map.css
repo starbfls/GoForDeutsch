@@ -1,0 +1,132 @@
+/* A deterministic camera follows scene selection; there is no drag interaction. */
+.scene-tabs {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+.scene-tabs > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 9px 19px;
+  border: 1px solid #ccd7ca;
+  border-radius: 9px;
+  color: #4c6050;
+  background: #fff;
+  font-size: 18px;
+}
+.scene-tabs > button[aria-pressed="true"] {
+  background: #315c47;
+  color: #fff;
+  border-color: #315c47;
+}
+.scene-tabs > button > span:first-child {
+  opacity: 0.7;
+  font-size: 16px;
+}
+.scene-count {
+  font-size: 16px;
+  margin-left: 12px;
+  opacity: 0.8;
+}
+.town-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(560px, calc(100dvh - 230px), 950px);
+  border-radius: 15px;
+  background: #dce4d0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.map-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: url("/assets/town-unit1.png") center/100% 100% no-repeat;
+  transform-origin: 0 0;
+  transition: transform 1s cubic-bezier(0.25, 0.7, 0.2, 1);
+  will-change: transform;
+  z-index: -2;
+}
+.map-edge {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #21362c26, transparent 24%);
+  z-index: -1;
+  pointer-events: none;
+}
+.map-pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: #fffef4f5;
+  color: #254b36;
+  border: 1px solid #b6c9ad;
+  border-radius: 9px;
+  font-size: 18px;
+  font-weight: 650;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 3px 10px #2d3c2720;
+  transition:
+    left 1s cubic-bezier(0.25, 0.7, 0.2, 1),
+    top 1s cubic-bezier(0.25, 0.7, 0.2, 1),
+    background 0.15s;
+  z-index: 3;
+  white-space: nowrap;
+}
+.map-pin.selected {
+  background: #315c47;
+  border-color: #315c47;
+  color: #fff;
+}
+.map-pin:hover {
+  box-shadow: 0 5px 15px #203a2c33;
+}
+.map-mia {
+  position: absolute;
+  left: 20px;
+  bottom: -8px;
+  pointer-events: none;
+  z-index: 4;
+}
+.map-mia .mia-portrait {
+  width: 172px;
+}
+.today-panel {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 300px;
+  padding: 23px;
+  border: 1px solid #e8eadf;
+  border-radius: 13px;
+  background: #fffef8f2;
+  box-shadow: 0 8px 25px #2c3d2820;
+  backdrop-filter: blur(10px);
+  z-index: 4;
+}
+.today-panel h2 {
+  font-size: 29px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+.today-panel > p {
+  font-size: 19px;
+  margin: 9px 0 20px;
+  color: #344c3c;
+}
+.today-panel .primary-button {
+  width: 100%;
+}
+.today-panel .locked-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #79532c;
+}

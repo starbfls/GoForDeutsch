@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class TutorReply(BaseModel):
     model_config = ConfigDict(extra="forbid")
     message: str = Field(max_length=500)
-    expression: Literal["smile", "thinking", "talking", "happy", "encourage", "celebrate"]
+    expression: Literal["smile", "thinking", "talking", "happy", "encourage", "celebrate", "wink", "surprised", "proud", "ponder", "focus"]
     strategy: Literal["observe", "hint", "example", "retry", "transfer", "celebrate"]
 
 
@@ -27,15 +27,15 @@ def respond(step, state, action, answer="", question="", correct=False):
     hints = state["hints"].get(step["id"], 0)
     if action == "hint":
         text = step["hints"][min(max(hints - 1, 0), len(step["hints"]) - 1)]
-        fallback = TutorReply(message=text, expression="encourage", strategy="hint")
+        fallback = TutorReply(message=text, expression="ponder", strategy="hint")
     elif action == "example":
         fallback = TutorReply(message=f"看看这个例子：{step.get('example', step['german'])} 试着理解后自己再做一次。", expression="talking", strategy="example")
     elif action == "ask":
         fallback = TutorReply(message=f"我们先一起解决眼前的任务。{step['hints'][0]} 你也可以点“看个例子”继续练习。", expression="thinking", strategy="hint")
     elif correct:
-        fallback = TutorReply(message=step["explanation"], expression="happy", strategy="transfer")
+        fallback = TutorReply(message=step["explanation"], expression="proud", strategy="transfer")
     else:
-        fallback = TutorReply(message="我们再检查一下。" + step["hints"][min(hints, len(step["hints"]) - 1)], expression="thinking", strategy="retry")
+        fallback = TutorReply(message="我们再检查一下。" + step["hints"][min(hints, len(step["hints"]) - 1)], expression="focus", strategy="retry")
     if not AI_ENABLED or not OPENAI_API_KEY:
         return {**fallback.model_dump(), "source": "local", "notice": None}
     if not store.reserve_api_call(AI_DAILY_LIMIT):
@@ -53,7 +53,7 @@ ask时回答与当前德语学习有关的问题，其他请求温和引回任�
                "text": {"format": {"type": "json_schema", "name": "mia_teaching_move", "strict": True, "schema": {
                    "type": "object", "additionalProperties": False, "properties": {
                        "message": {"type": "string"},
-                       "expression": {"type": "string", "enum": ["smile", "thinking", "talking", "happy", "encourage", "celebrate"]},
+                       "expression": {"type": "string", "enum": ["smile", "thinking", "talking", "happy", "encourage", "celebrate", "wink", "surprised", "proud", "ponder", "focus"]},
                        "strategy": {"type": "string", "enum": ["observe", "hint", "example", "retry", "transfer", "celebrate"]}},
                    "required": ["message", "expression", "strategy"]}}}}
     request = urllib.request.Request("https://api.openai.com/v1/responses", data=json.dumps(payload).encode("utf-8"), headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"}, method="POST")
