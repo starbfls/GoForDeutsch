@@ -27,7 +27,7 @@ def main():
     if not PYTHON.is_file():
         print("Creating Python environment (first run)...", flush=True)
         venv.EnvBuilder(with_pip=True).create(BACKEND / "venv")
-    check = subprocess.run([str(PYTHON), "-c", "import fastapi,uvicorn,passlib,bcrypt,jwt,pydantic,multipart"], capture_output=True)
+    check = subprocess.run([str(PYTHON), "-c", "import fastapi,uvicorn,bcrypt,jwt,pydantic,multipart"], capture_output=True)
     if check.returncode:
         print("Installing backend dependencies (internet needed on first run)...", flush=True)
         run([PYTHON, "-m", "pip", "install", "-r", "requirements.txt"], BACKEND)
