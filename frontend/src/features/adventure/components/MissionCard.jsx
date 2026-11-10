@@ -1,13 +1,19 @@
 import { ArrowRight, Check, LockKeyhole } from "lucide-react";
 import { unlocked } from "../catalog";
-export default function MissionCard({ mission, index, progress, onStart }) {
+export default function MissionCard({
+  mission,
+  index,
+  progress,
+  onStart,
+  busy = false,
+}) {
   const done = progress.completed.includes(mission.id);
   const available = unlocked(mission, progress);
   return (
     <button
       className={`mission-card ${done ? "is-done" : ""}`}
       onClick={() => onStart(mission)}
-      disabled={!available}
+      disabled={!available || busy}
     >
       <span className="mission-number">
         {String(index + 1).padStart(2, "0")}

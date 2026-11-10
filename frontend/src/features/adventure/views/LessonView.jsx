@@ -1,12 +1,12 @@
 import { ArrowLeft } from "lucide-react";
-import Mia from "@/components/Mia";
+import SceneStage from "../components/SceneStage";
+import SceneLanding from "../components/SceneLanding";
 import ExercisePanel from "../components/ExercisePanel";
 import CompletionPanel from "../components/CompletionPanel";
+import SceneTasks from "../components/SceneTasks";
 export default function LessonView({ game }) {
-  const { run, busy, expression, speech, navigate } = game;
-  const scene = game.data.chapters.find(
-    (item) => item.id === game.mission.chapter_id,
-  );
+  const { run, busy, navigate, scene } = game;
+  if (!scene) return null;
   return (
     <>
       <div className="lesson-toolbar">
@@ -16,33 +16,39 @@ export default function LessonView({ game }) {
           disabled={busy}
         >
           <ArrowLeft size={19} />
-          地图
+          大地图
         </button>
         <span>
-          {run.completed ? "已完成" : `${run.index + 1} / ${run.steps_count}`}
+          {scene.location} · {scene.de}
         </span>
-        <span>{scene.de}</span>
+        <span>
+          {run
+            ? run.completed
+              ? "已完成"
+              : `${run.index + 1} / ${run.steps_count}`
+            : ""}
+        </span>
       </div>
-      {run.completed ? (
-        <CompletionPanel game={game} />
-      ) : (
-        <div className="lesson-layout" key={game.mission.id}>
-          <section className={`lesson-scene scene-${scene.id}`}>
-            <div
-              className="scene-art"
-              style={{ backgroundImage: `url('${scene.image}')` }}
-            />
-            <div className="lesson-mia">
-              <Mia expression={busy ? "ponder" : expression} />
-            </div>
-            <div className="dialogue-box" aria-live="polite">
-              <strong>Mia</strong>
-              <p>{busy ? "想一想…" : speech}</p>
-            </div>
-          </section>
-          <ExercisePanel game={game} />
-        </div>
-      )}
+      <div
+        className={`lesson-layout scene-entry ${run ? "" : "scene-preview"}`}
+        key={scene.id}
+      >
+        <SceneStage key={scene.id + Boolean(run)} game={game}>
+          {!run && <SceneLanding game={game} />}
+        </SceneStage>
+        {run && (
+          <aside className="scene-task-pane" aria-label="场景练习">
+            {run.completed ? (
+              <CompletionPanel game={game} />
+            ) : (
+              <>
+                <SceneTasks game={game} scene={scene} picker />
+                <ExercisePanel game={game} />
+              </>
+            )}
+          </aside>
+        )}
+      </div>
     </>
   );
 }

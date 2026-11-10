@@ -5,9 +5,11 @@ import useFlashcards from "./useFlashcards";
 import CardLibrary from "./CardLibrary";
 import ReviewCard from "./ReviewCard";
 import "./flashcards.css";
+import "@/features/companion/companion.css";
 export default function FlashcardsView({ game }) {
   const deck = useFlashcards(game.setToast);
   const [active, setActive] = useState(null);
+  const [miaOpen, setMiaOpen] = useState(false);
   if (deck.loading)
     return (
       <div className="loading-line">
@@ -53,7 +55,27 @@ export default function FlashcardsView({ game }) {
         )}
       </div>
       <aside className="flashcard-mia" aria-label="Mia">
-        <Mia expression={expression} />
+        {miaOpen && (
+          <p className="flashcard-mia-note" aria-live="polite">
+            {deck.finished
+              ? "Gut gemacht! 下次再用这些词说一句话，看看能不能独立想起来。"
+              : deck.current && !deck.revealed
+                ? "Erst überlegen! 先在脑海里回忆意思，再翻面。暂时想不起来也没关系，看看例句后再试一次。"
+                : deck.revealed
+                  ? "把例句放回刚才的场景里，再用自己的话说一遍。自评按这一次的回忆情况来选就好。"
+                  : active
+                    ? "试试把这个词和场景连起来：盖住中文，再自己说一句。需要时再展开看线索。"
+                    : "Hallo! 你来选词，我陪你复习。先回忆再翻面，联想和例句会在需要时帮你。"}
+          </p>
+        )}
+        <button
+          className="flashcard-mia-button"
+          aria-label="和单词卡旁的 Mia 聊聊"
+          aria-expanded={miaOpen}
+          onClick={() => setMiaOpen(!miaOpen)}
+        >
+          <Mia expression={expression} />
+        </button>
       </aside>
     </div>
   );

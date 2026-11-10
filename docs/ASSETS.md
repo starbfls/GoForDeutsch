@@ -53,3 +53,8 @@ Generated with the built-in image generation tool; no runtime image API key is n
 | mia-idle.png | Two matching neutral portraits: eyes open / eyes closed |
 
 The new atlas replaces the previous supplemental atlas at runtime and includes two thinking expressions. The original six-expression atlas remains available. Default idle portraits alternate briefly for a blink at random intervals; there is no continuous breathing or floating motion. Expressions fade briefly when changed. All runtime references use D-drive project assets. Temporary C-drive generation outputs for this redesign were removed after copying at the user's request.
+
+
+## Expanded town panorama
+
+Built-in image generation edited town-unit1.png into frontend/public/assets/town-panorama.png (2172 × 724, 3:1), adding continuous roads, houses, gardens and trees at the sides. This is newly painted scenery, rather than an enlarged copy of the original. The main bakery, school and park remain identifiable in the central town. Generation brief: [asset-prompts-panorama.json](asset-prompts-panorama.json). The selected asset is saved in the D-drive project; its temporary C-drive output was deleted at the user's request.

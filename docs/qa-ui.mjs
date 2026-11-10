@@ -18,6 +18,7 @@ await new Promise((done, reject) => {
 let sequence = 0;
 const pending = new Map();
 const errors = [];
+let taskStarts = 0;
 socket.onmessage = ({ data }) => {
   const message = JSON.parse(data);
   if (message.id) {
@@ -26,6 +27,11 @@ socket.onmessage = ({ data }) => {
     if (message.error) request.reject(new Error(JSON.stringify(message.error)));
     else request.resolve(message.result);
   }
+  if (
+    message.method === "Network.requestWillBeSent" &&
+    message.params.request.url.includes("/api/learning/start")
+  )
+    taskStarts += 1;
   if (message.method === "Runtime.exceptionThrown")
     errors.push(message.params.exceptionDetails.text);
 };
@@ -55,9 +61,31 @@ const until = async (expression, description) => {
 };
 const click = (selector) =>
   evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+const tap = async (selector) => {
+  await until(
+    `Boolean(document.querySelector(${JSON.stringify(selector)}))`,
+    "click target ready",
+  );
+  const point = await evaluate(
+    `(()=>{const button=document.querySelector(${JSON.stringify(selector)});button.scrollIntoView({block:'nearest'});const r=button.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`,
+  );
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", ...point });
+  await send("Input.dispatchMouseEvent", {
+    type: "mousePressed",
+    button: "left",
+    clickCount: 1,
+    ...point,
+  });
+  await send("Input.dispatchMouseEvent", {
+    type: "mouseReleased",
+    button: "left",
+    clickCount: 1,
+    ...point,
+  });
+};
 const screenshot = async (name) => {
   await evaluate("document.fonts.ready");
-  await new Promise((done) => setTimeout(done, 350));
+  await new Promise((done) => setTimeout(done, 650));
   const result = await send("Page.captureScreenshot", {
     format: "png",
     captureBeyondViewport: false,
@@ -78,6 +106,7 @@ const lessons = JSON.parse(
 try {
   await send("Page.enable");
   await send("Runtime.enable");
+  await send("Network.enable");
   await send("Page.addScriptToEvaluateOnNewDocument", {
     source: "Math.random=()=>0.17;",
   });
@@ -90,7 +119,7 @@ try {
   await send("Page.navigate", { url: base });
   await send("Page.bringToFront");
   await until(
-    `document.querySelector('.today-panel .primary-button')&&!document.querySelector('.today-panel .primary-button').disabled`,
+    `document.querySelector('.map-pin')&&!document.querySelector('.map-pin').disabled`,
     "map ready",
   );
   await evaluate(
@@ -117,7 +146,7 @@ try {
     "no adventure slogans",
   );
   for (const asset of [
-    "town-unit1.png",
+    "town-panorama.png",
     "bakery-unit1.png",
     "park-unit1.png",
     "school-unit1.png",
@@ -129,39 +158,132 @@ try {
       "asset " + asset,
     );
   await until(
-    `document.querySelector('.town-stage').dataset.focused==='bakery'`,
-    "bakery focus",
+    `document.querySelector('.town-stage').dataset.focused==='overview'`,
+    "overview first",
   );
-  await new Promise((done) => setTimeout(done, 1100));
-  await screenshot("ui-map-bakery.png");
-  const before = await evaluate(
-    `document.querySelector('.map-world').dataset.cameraX`,
+  await new Promise((done) => setTimeout(done, 1000));
+  assert(
+    await evaluate(
+      `!document.querySelector('.map-connectors')&&!document.querySelector('.today-panel')&&!document.querySelector('.exercise-panel')`,
+    ),
+    "only destination buttons on map",
   );
-  await click('[data-chapter="park"]');
+  assert(
+    await evaluate(
+      `(()=>{const world=document.querySelector('.map-world').getBoundingClientRect(),view=document.querySelector('.town-stage').getBoundingClientRect();return world.left<=view.left+2&&world.top<=view.top+2&&world.right>=view.right-2&&world.bottom>=view.bottom-2;})()`,
+    ),
+    "extended scenery fills the viewport",
+  );
+  await screenshot("ui-map-overview.png");
+  await tap(".map-companion .companion-portrait");
   await until(
-    `document.querySelector('.town-stage').dataset.focused==='park'`,
-    "park focus",
+    `document.querySelector('.companion-dialogue')?.innerText.includes('Guten Tag')`,
+    "Mia bilingual greeting",
+  );
+  await click(".companion-topics button");
+  assert(
+    await evaluate(
+      `document.querySelector('.companion-next').innerText.includes('面包店')`,
+    ),
+    "Mia recommendation follows progress",
+  );
+  await screenshot("ui-map-mia.png");
+  await click(".companion-close");
+
+  const initialScale = await evaluate(
+    `Number(document.querySelector('.map-world').dataset.cameraScale)`,
+  );
+  const initialWidth = await evaluate(
+    `document.querySelector('.map-world').getBoundingClientRect().width`,
+  );
+  await tap('[data-chapter="park"]');
+  await until(
+    `document.querySelector('.town-stage')?.dataset.focused==='park'`,
+    "park zoom target",
   );
   assert(
     await evaluate(
-      `document.querySelector('.map-world').dataset.cameraX!==${JSON.stringify(before)}`,
+      `Number(document.querySelector('.map-world').dataset.cameraScale)>${initialScale}`,
     ),
-    "camera moves",
+    "camera zooms in",
+  );
+  await new Promise((done) => setTimeout(done, 200));
+  assert(
+    await evaluate(
+      `document.querySelector('.map-world').getBoundingClientRect().width>${initialWidth}+10`,
+    ),
+    "visible scale transition",
+  );
+  await screenshot("ui-map-zoom.png");
+  await until(
+    `Boolean(document.querySelector('.scene-park'))&&Boolean(document.querySelector('.scene-start-panel'))`,
+    "locked scene preview",
   );
   assert(
     await evaluate(
-      `document.querySelector('.today-panel .primary-button').disabled`,
+      `!document.querySelector('.exercise-panel')&&document.querySelector('.scene-start-button').disabled`,
     ),
-    "locked scene cannot start",
+    "locked tasks cannot start",
   );
-  await new Promise((done) => setTimeout(done, 1100));
-  await screenshot("ui-map-park.png");
-  await click('[data-chapter="bakery"]');
+  assert(taskStarts === 0, "scene previews do not start tasks");
+  await screenshot("ui-scene-locked.png");
+  await click(".lesson-toolbar .text-button");
+  await until(
+    `document.querySelector('.town-stage')?.dataset.focused==='overview'`,
+    "return to overview",
+  );
+  await tap('[data-chapter="bakery"]');
+  await until(
+    `Boolean(document.querySelector('.scene-bakery'))&&Boolean(document.querySelector('.scene-start-panel'))`,
+    "first click enters scene only",
+  );
+  assert(taskStarts === 0, "visiting bakery makes no task request");
+  assert(
+    await evaluate(
+      `!document.querySelector('.exercise-panel')&&!document.querySelector('.scene-task-pane')`,
+    ),
+    "no exercise before second click",
+  );
+  await screenshot("ui-bakery-scene.png");
+  await click(".scene-companion-button");
+  assert(
+    await evaluate(
+      `document.querySelector('.dialogue-box').innerText.includes('Schau mal')`,
+    ),
+    "Mia encourages observation",
+  );
+  await tap(".scene-start-button");
+  await until(
+    `Boolean(document.querySelector('.exercise-panel'))`,
+    "second click starts task",
+  );
+  assert(taskStarts === 1, "one explicit task start");
+  assert(
+    await evaluate(
+      `document.querySelector('.scene-task-pane').getBoundingClientRect().left>=document.querySelector('.lesson-scene').getBoundingClientRect().right`,
+    ),
+    "task appears beside scene",
+  );
+  await screenshot("ui-bakery-task.png");
+  await click(".scene-task-picker summary");
+  assert(
+    await evaluate(
+      `document.querySelectorAll('.scene-task-picker .mission-card').length===3`,
+    ),
+    "three tasks in scene picker",
+  );
+  await click(".scene-task-picker summary");
   const blinked = await evaluate(
-    `new Promise(resolve=>{const image=document.querySelector('.map-mia .mia-portrait');let closed=false;const observer=new MutationObserver(()=>{if(image.dataset.blink==='closed')closed=true;else if(closed){observer.disconnect();resolve(true);}});observer.observe(image,{attributes:true,attributeFilter:['data-blink']});setTimeout(()=>{observer.disconnect();resolve(false);},10000);})`,
+    `new Promise(resolve=>{const portrait=document.querySelector('.lesson-mia .mia-portrait');let closed=false;const observer=new MutationObserver(()=>{if(portrait.dataset.blink==='closed')closed=true;else if(closed){observer.disconnect();resolve(true);}});observer.observe(portrait,{attributes:true,attributeFilter:['data-blink']});setTimeout(()=>{observer.disconnect();resolve(false);},10000);})`,
   );
-  assert(blinked, "idle character blinks and reopens eyes");
-  await click(".today-panel .primary-button");
+  assert(blinked, "scene Mia blinks");
+  await click(".scene-companion-button");
+  await click(".scene-companion-actions button");
+  await until(
+    `Boolean(document.querySelector('.answer-feedback'))&&!document.querySelector('.hint-actions button').disabled`,
+    "Mia hint arrives",
+  );
+
   for (let m = 0; m < lessons.length; m++) {
     const mission = lessons[m];
     await until(
@@ -199,8 +321,25 @@ try {
       `Boolean(document.querySelector('.completion'))`,
       "task complete",
     );
-    if (m < lessons.length - 1)
+    if (m < lessons.length - 1) {
       await click(".completion-actions .primary-button");
+      if (lessons[m + 1].chapter !== mission.chapter) {
+        await until(
+          `document.querySelector('.town-stage')?.dataset.focused==='overview'`,
+          "next place returns to overview",
+        );
+        await tap(`[data-chapter="${lessons[m + 1].chapter}"]`);
+        await until(
+          `Boolean(document.querySelector('.scene-start-button'))`,
+          "next destination scene",
+        );
+        assert(
+          await evaluate(`!document.querySelector('.exercise-panel')`),
+          "next scene waits for task click",
+        );
+        await tap(".scene-start-button");
+      }
+    }
   }
   assert(
     await evaluate(
@@ -343,8 +482,7 @@ try {
   );
   await click('button[aria-label="学习地图"]');
   await until(`Boolean(document.querySelector('.town-stage'))`, "mobile map");
-  await click('[data-chapter="school"]');
-  await new Promise((done) => setTimeout(done, 1100));
+  await new Promise((done) => setTimeout(done, 1000));
   await screenshot("ui-map-mobile.png");
   assert(
     await evaluate(`document.documentElement.scrollWidth<=innerWidth`),
@@ -352,10 +490,30 @@ try {
   );
   assert(
     await evaluate(
-      `document.querySelector('.today-panel .primary-button').getBoundingClientRect().bottom<=document.querySelector('.adventure-sidebar').getBoundingClientRect().top`,
+      `(()=>{const view=document.querySelector('.town-stage').getBoundingClientRect();return [...document.querySelectorAll('.map-pin')].every(button=>{const r=button.getBoundingClientRect();return r.left>=view.left&&r.right<=view.right&&r.top>=view.top&&r.bottom<=view.bottom;});})()`,
     ),
-    "mobile start above navigation",
+    "mobile map buttons visible",
   );
+  await tap('[data-chapter="school"]');
+  await until(
+    `Boolean(document.querySelector('.scene-school'))&&Boolean(document.querySelector('.scene-start-button'))`,
+    "mobile scene entry",
+  );
+  assert(
+    await evaluate(`!document.querySelector('.exercise-panel')`),
+    "mobile first click only visits",
+  );
+  await tap(".scene-start-button");
+  await until(
+    `Boolean(document.querySelector('.exercise-panel'))`,
+    "mobile explicit start",
+  );
+  await screenshot("ui-scene-mobile.png");
+  assert(
+    await evaluate(`document.documentElement.scrollWidth<=innerWidth`),
+    "mobile scene no overflow",
+  );
+  await click(".lesson-toolbar .text-button");
   await click('button[aria-label="打开设置"]');
   await click(".motion-toggle input");
   assert(
@@ -406,7 +564,13 @@ try {
           "readable typography",
           "no adventure slogans",
           "unit catalog",
-          "camera focus",
+          "overview map",
+          "visible zoom",
+          "two-click scene then task",
+          "Mia greeting and recommendation",
+          "Mia observation and hints",
+          "side task pane",
+          "return to overview",
           "locked scene preview",
           "natural blink",
           "all tasks",
@@ -424,6 +588,9 @@ try {
       2,
     ),
   );
+} catch (error) {
+  await screenshot("ui-failure.png");
+  throw error;
 } finally {
   socket.close();
 }

@@ -8,6 +8,8 @@
   min-width: 0;
 }
 .flashcard-mia {
+  flex-direction: column;
+  align-items: center;
   position: sticky;
   top: 110px;
   padding-top: 45px;

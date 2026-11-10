@@ -3,6 +3,11 @@ export default function CompletionPanel({ game }) {
   const next = game.data.missions.find(
     (mission) => mission.id === game.progress.recommended,
   );
+  const hasNext =
+    game.progress.completed.length < game.data.missions.length &&
+    next &&
+    next.id !== game.mission.id;
+  const nextHere = hasNext && next.chapter_id === game.scene.id;
   const independent = game.run.evidence.filter(
     (item) => item.independent,
   ).length;
@@ -22,12 +27,14 @@ export default function CompletionPanel({ game }) {
         <button
           className="primary-button"
           onClick={() =>
-            next && next.id !== game.mission.id
-              ? game.start(next)
+            hasNext
+              ? nextHere
+                ? game.start(next)
+                : game.navigate("town")
               : game.navigate("cards")
           }
         >
-          {next && next.id !== game.mission.id ? "下一练习" : "复习单词"}
+          {hasNext ? (nextHere ? "下一练习" : "选择下一地点") : "复习单词"}
           <ArrowRight size={20} />
         </button>
       </div>

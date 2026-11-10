@@ -5,7 +5,6 @@ import AdventureSidebar from "@/features/adventure/components/AdventureSidebar";
 import AdventureHeader from "@/features/adventure/components/AdventureHeader";
 import UnitSelector from "@/features/adventure/components/UnitSelector";
 import SettingsDialog from "@/features/adventure/components/SettingsDialog";
-import SceneTransition from "@/features/adventure/components/SceneTransition";
 import TownView from "@/features/adventure/views/TownView";
 import MissionsView from "@/features/adventure/views/MissionsView";
 import NotebookView from "@/features/adventure/views/NotebookView";
@@ -20,7 +19,7 @@ export default function Adventure() {
     missions: "练习",
     cards: "单词卡",
     notebook: "学习记录",
-    lesson: game.mission?.title,
+    lesson: game.scene?.de,
   }[game.page];
   return (
     <div className={`adventure-app ${game.motion ? "" : "reduce-motion"}`}>
@@ -63,7 +62,7 @@ export default function Adventure() {
             {game.page === "cards" && (
               <FlashcardsView key={user?.username || "guest"} game={game} />
             )}{" "}
-            {game.page === "lesson" && game.run && <LessonView game={game} />}
+            {game.page === "lesson" && game.scene && <LessonView game={game} />}
           </div>
         </main>
       </div>
@@ -76,7 +75,6 @@ export default function Adventure() {
         </div>
       )}
       {game.settings && <SettingsDialog game={game} user={user} />}
-      <SceneTransition chapter={game.transition} />
     </div>
   );
 }

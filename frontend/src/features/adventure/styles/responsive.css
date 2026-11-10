@@ -35,9 +35,6 @@
   .adventure-topbar {
     padding: 0 24px;
   }
-  .today-panel {
-    width: 270px;
-  }
   .lesson-layout {
     gap: 18px;
     grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr);
@@ -84,9 +81,6 @@
   }
   .topbar-right {
     gap: 18px;
-  }
-  .map-mia .mia-portrait {
-    width: 145px;
   }
   .lesson-layout {
     grid-template-columns: 1fr;
@@ -199,57 +193,6 @@
     padding: 5px 8px;
     max-width: 220px;
   }
-  .scene-tabs {
-    gap: 7px;
-    margin-bottom: 13px;
-  }
-  .scene-tabs > button {
-    flex: 1;
-    padding: 8px 6px;
-    font-size: 16px;
-    gap: 5px;
-  }
-  .scene-tabs > button > span:first-child {
-    display: none;
-  }
-  .scene-count {
-    font-size: 14px;
-    margin-left: 3px;
-  }
-  .town-stage {
-    height: calc(100dvh - 330px);
-    min-height: 440px;
-    border-radius: 11px;
-  }
-  .map-mia {
-    left: 5px;
-    bottom: 0;
-  }
-  .map-mia .mia-portrait {
-    width: 105px;
-  }
-  .today-panel {
-    width: 235px;
-    bottom: 15px;
-    right: 12px;
-    padding: 17px;
-  }
-  .today-panel h2 {
-    font-size: 25px;
-  }
-  .today-panel > p {
-    font-size: 17px;
-    margin: 6px 0 13px;
-  }
-  .today-panel .primary-button {
-    padding: 10px 12px;
-    font-size: 17px;
-    min-height: 46px;
-  }
-  .map-pin {
-    padding: 9px 13px;
-    font-size: 16px;
-  }
   .lesson-scene {
     min-height: 385px;
   }
@@ -349,8 +292,5 @@
   }
   .completion h2 {
     font-size: 30px;
-  }
-  .scene-transition strong {
-    font-size: 33px;
   }
 }

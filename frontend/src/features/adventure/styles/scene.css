@@ -1,0 +1,242 @@
+/* The setting arrives first; the exercise pane follows beside it. */
+.scene-task-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.scene-task-pane > .exercise-panel {
+  flex: 1;
+  min-height: 0;
+}
+.scene-task-pane > .completion {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.scene-entry .scene-art {
+  animation: scene-arrive 0.5s ease-out both;
+}
+.scene-entry .scene-task-pane {
+  animation: task-reveal 0.35s ease-out 0.18s both;
+}
+.scene-task-picker {
+  position: relative;
+  background: #fffefa;
+  border: 1px solid #c8d7c4;
+  border-radius: 10px;
+  z-index: 10;
+}
+.scene-task-picker summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 18px;
+  color: #2b5139;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+}
+.scene-task-picker summary::-webkit-details-marker {
+  display: none;
+}
+.scene-task-picker[open] summary > svg {
+  transform: rotate(180deg);
+}
+.scene-task-list {
+  display: grid;
+  gap: 10px;
+}
+.scene-task-picker > .scene-task-list {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccd9c7;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px #25412c24;
+  background: #fffefa;
+}
+.scene-task-list .mission-card {
+  gap: 10px;
+  padding: 15px 13px;
+}
+.scene-task-list .mission-card strong {
+  font-size: 18px;
+}
+.scene-task-list .mission-number {
+  font-size: 16px;
+  width: 22px;
+}
+.scene-task-list .mission-status {
+  font-size: 14px;
+}
+.scene-task-list .mission-card > svg {
+  flex-shrink: 0;
+  width: 17px;
+}
+.scene-tasks {
+  flex: 1;
+  padding: 26px;
+  background: #fffefa;
+  border: 1px solid #d2decd;
+  border-radius: 13px;
+}
+.scene-tasks h2 {
+  font-size: 27px;
+  margin-bottom: 23px;
+  font-weight: 700;
+}
+.scene-locked {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #775a31;
+  font-size: 17px;
+  margin-bottom: 22px !important;
+}
+@keyframes scene-arrive {
+  from {
+    opacity: 0.5;
+    transform: scale(1.07);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes task-reveal {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (max-width: 650px) {
+  .scene-tasks {
+    padding: 20px 16px;
+  }
+  .scene-task-pane {
+    padding-bottom: 8px;
+  }
+  .scene-entry .scene-task-pane {
+    animation-name: task-rise;
+  }
+}
+@keyframes task-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A scene visit is a separate stop before starting any exercise. */
+.lesson-layout.scene-preview {
+  display: block;
+}
+.scene-preview .lesson-scene {
+  height: clamp(560px, calc(100dvh - 250px), 900px);
+}
+.scene-preview .lesson-mia {
+  left: 135px;
+  bottom: 145px;
+}
+.scene-preview .lesson-mia .mia-portrait {
+  width: 245px;
+}
+.scene-preview .dialogue-box {
+  width: min(470px, calc(100% - 380px));
+  right: auto;
+}
+.scene-start-panel {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  width: 300px;
+  padding: 25px;
+  border: 1px solid #cedbc6;
+  border-radius: 13px;
+  background: #fffef8f5;
+  box-shadow: 0 6px 22px #2d412826;
+}
+.scene-start-panel h2 {
+  font-size: 29px;
+  font-weight: 700;
+}
+.scene-start-panel > p {
+  font-size: 18px;
+  color: #39553f;
+  line-height: 1.7;
+  margin: 10px 0 20px;
+}
+.scene-start-button {
+  width: 100%;
+}
+.scene-talk-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: none;
+  padding: 8px 0 0;
+  color: #315c47;
+  font-size: 16px;
+}
+@media (max-width: 650px) {
+  .scene-preview .lesson-scene {
+    height: 550px;
+    min-height: 550px;
+  }
+  .scene-preview .lesson-mia {
+    left: 90px;
+    bottom: 310px;
+  }
+  .scene-preview .lesson-mia .mia-portrait {
+    width: 135px;
+  }
+  .scene-preview .dialogue-box {
+    left: 12px;
+    width: calc(100% - 24px);
+    bottom: 182px;
+    min-height: 0;
+    padding: 13px 15px;
+  }
+  .scene-preview .dialogue-box > p {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .scene-start-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    padding: 17px;
+  }
+  .scene-start-panel h2 {
+    font-size: 23px;
+  }
+  .scene-start-panel > p {
+    font-size: 16px;
+    margin: 6px 0 12px;
+  }
+  .scene-start-panel .scene-locked {
+    margin-bottom: 10px !important;
+    font-size: 15px;
+  }
+  .scene-start-button {
+    min-height: 46px;
+    padding: 9px 12px;
+    font-size: 17px;
+  }
+}

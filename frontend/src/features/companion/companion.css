@@ -1,0 +1,195 @@
+.map-shell {
+  position: relative;
+}
+.map-companion {
+  position: absolute;
+  bottom: 0;
+  left: 15px;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+.companion-portrait {
+  display: block;
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: #254b36;
+  pointer-events: auto;
+  border-radius: 12px;
+}
+.companion-portrait .mia-portrait {
+  width: 155px;
+}
+.companion-name {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 12px;
+  border: 1px solid #bacdb6;
+  border-radius: 20px;
+  background: #fffef7f5;
+  font-size: 16px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.companion-dialogue {
+  position: relative;
+  margin-bottom: 22px;
+  width: 360px;
+  max-width: calc(100vw - 250px);
+  border: 1px solid #bed0b9;
+  border-radius: 13px;
+  padding: 24px 22px 18px;
+  background: #fffef8f7;
+  color: #233f2e;
+  box-shadow: 0 6px 22px #23422c24;
+  pointer-events: auto;
+}
+.companion-dialogue p {
+  font-size: 18px;
+  line-height: 1.85;
+  margin-right: 12px;
+}
+.companion-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  padding: 5px;
+  border: 0;
+  background: none;
+  color: #4b6351;
+}
+.companion-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.companion-topics button {
+  background: #eaf1e4;
+  border: 1px solid #c4d3bc;
+  border-radius: 7px;
+  color: #315b3e;
+  padding: 7px 11px;
+  font-size: 16px;
+}
+.companion-next {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 0 0;
+  margin-top: 12px;
+  border: 0;
+  border-top: 1px solid #d5dfcd;
+  background: none;
+  color: #315c47;
+  font-size: 17px;
+  font-weight: 600;
+}
+.scene-companion-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  border-radius: 15px;
+  cursor: pointer;
+}
+.scene-companion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 13px;
+}
+.scene-companion-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #c4d3bc;
+  border-radius: 7px;
+  background: #edf3e7;
+  color: #31543c;
+  padding: 7px 11px;
+  font-size: 16px;
+}
+.flashcard-mia-button {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 14px;
+  cursor: pointer;
+  color: #315c47;
+}
+.flashcard-mia-note {
+  padding: 15px 17px;
+  background: #fffef8;
+  border: 1px solid #c8d8bf;
+  border-radius: 12px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #2b4b34;
+  max-width: 280px;
+  margin-bottom: 12px;
+}
+@media (max-width: 650px) {
+  .map-companion {
+    position: relative;
+    left: 0;
+    bottom: 0;
+    min-height: 145px;
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .companion-portrait .mia-portrait {
+    width: 95px;
+  }
+  .companion-name {
+    font-size: 14px;
+    padding: 4px 9px;
+    bottom: 3px;
+  }
+  .companion-name svg {
+    width: 15px;
+  }
+  .companion-dialogue {
+    flex: 1;
+    width: auto;
+    max-width: none;
+    padding: 21px 15px 14px;
+    margin: 0;
+  }
+  .companion-dialogue p {
+    font-size: 17px;
+    margin-right: 0;
+  }
+  .companion-topics {
+    gap: 7px;
+  }
+  .companion-topics button {
+    padding: 6px 7px;
+    font-size: 15px;
+  }
+  .flashcards-layout .flashcard-mia {
+    pointer-events: auto;
+  }
+  .flashcard-mia-note {
+    position: absolute;
+    bottom: 120px;
+    right: 0;
+    width: 250px;
+    font-size: 16px;
+    padding: 14px;
+  }
+}

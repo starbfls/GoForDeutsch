@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { learningApi } from "@/services/api";
+import { sceneGuide, completionDialogue } from "@/features/companion/dialogue";
 import { EMPTY_PROGRESS, friendlyError } from "../catalog";
 
 const GREETING = "选择一个地点开始练习。";
@@ -29,7 +30,8 @@ export default function useAdventure(user) {
   const [speech, setSpeech] = useState(GREETING);
   const [expression, setExpression] = useState("smile");
   const [toast, setToast] = useState("");
-  const [transition, setTransition] = useState(null);
+  const [scene, setScene] = useState(null);
+  const [travel, setTravel] = useState(null);
   const inflight = useRef(false);
   const loadVersion = useRef(0);
   const load = useCallback(async () => {
@@ -66,28 +68,53 @@ export default function useAdventure(user) {
   };
   const start = async (chosen) => {
     if (inflight.current || !chosen) return;
+    const destination = data.chapters.find(
+      (item) => item.id === chosen.chapter_id,
+    );
+    if (!destination) return;
     inflight.current = true;
     setBusy(true);
-    const chapter = data.chapters.find((item) => item.id === chosen.chapter_id);
-    const animate =
-      motion && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (animate) setTransition(chapter);
     try {
       const { data: result } = await learningApi.start(chosen.id);
-      if (animate) await pause(450);
       setRun(result);
       setMission(chosen);
+      setScene(destination);
       setPending(null);
       resetInputs();
       setSpeech(result.message);
-      setExpression(chapter.expression);
+      setExpression(destination.expression);
       setPage("lesson");
     } catch (err) {
       setToast(friendlyError(err));
     } finally {
       inflight.current = false;
       setBusy(false);
-      setTransition(null);
+    }
+  };
+  const enterScene = async (destination) => {
+    if (inflight.current || !destination) return;
+    inflight.current = true;
+    setBusy(true);
+    const fromMap = page === "town";
+    const animate =
+      motion && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (fromMap) setTravel(destination);
+    const image = new Image();
+    image.src = destination.image;
+    try {
+      if (fromMap && animate) await pause(950);
+      setRun(null);
+      setMission(null);
+      setScene(destination);
+      setPending(null);
+      resetInputs();
+      setSpeech(sceneGuide(destination.id).welcome);
+      setExpression("smile");
+      setPage("lesson");
+    } finally {
+      inflight.current = false;
+      setBusy(false);
+      setTravel(null);
     }
   };
   const turn = async (action) => {
@@ -137,7 +164,7 @@ export default function useAdventure(user) {
     resetInputs();
     if (next.completed) {
       setExpression("proud");
-      setSpeech("练习完成。");
+      setSpeech(completionDialogue(next));
     } else {
       setExpression(next.index === 1 ? "ponder" : "smile");
       setSpeech(next.step.prompt);
@@ -147,6 +174,8 @@ export default function useAdventure(user) {
     if (busy) return;
     setPage(target);
     setRun(null);
+    setScene(null);
+    setTravel(null);
     setPending(null);
     resetInputs();
     setExpression("smile");
@@ -181,7 +210,9 @@ export default function useAdventure(user) {
     expression,
     toast,
     setToast,
-    transition,
+    scene,
+    travel,
+    enterScene,
     load,
     start,
     turn,

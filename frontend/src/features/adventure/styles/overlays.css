@@ -80,48 +80,6 @@
 .settings-info strong {
   font-weight: 500;
 }
-.scene-transition {
-  position: fixed;
-  inset: 0;
-  z-index: 250;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f5f7f1f5;
-  backdrop-filter: blur(14px);
-  color: #2c4d37;
-}
-.scene-transition strong {
-  font-size: 40px;
-  font-weight: 700;
-}
-.scene-transition p {
-  font-size: 22px;
-  margin-top: 8px;
-}
-.transition-track {
-  width: 140px;
-  height: 3px;
-  margin-top: 25px;
-  background: #d2dfc9;
-  overflow: hidden;
-}
-.transition-track i {
-  display: block;
-  width: 55%;
-  height: 100%;
-  background: #75976a;
-  animation: travel 1s ease-in-out infinite;
-}
-@keyframes travel {
-  from {
-    transform: translateX(-120%);
-  }
-  to {
-    transform: translateX(280%);
-  }
-}
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
