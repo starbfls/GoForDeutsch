@@ -8,6 +8,9 @@ def normalize(text):
 
 
 def check_answer(step, answer):
+    if "rubric" in step:
+        from .writing import assess_writing
+        return assess_writing(step, answer)["correct"]
     value = normalize(answer)
     if step["type"] == "choice":
         return value == step["answer"]
@@ -27,3 +30,21 @@ def check_answer(step, answer):
     return False
 
 
+
+
+def assess_answer(step, answer):
+    if "rubric" in step:
+        from .writing import assess_writing
+        return assess_writing(step, answer)
+    correct = check_answer(step, answer)
+    assessment = None
+    if step.get("mode") == "reading":
+        line = step["evidence_line"]
+        assessment = {"kind":"reading","focus_line":line}
+        if correct:
+            assessment["evidence"] = step["passage"]["lines"][line-1]
+    elif step.get("mode") == "vocabulary":
+        assessment = {"kind":"vocabulary"}
+        if correct:
+            assessment["word"] = step["example"]
+    return {"correct":correct,"assessment":assessment}

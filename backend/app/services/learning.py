@@ -3,28 +3,17 @@ import time
 from collections import defaultdict
 from threading import Lock
 from fastapi import HTTPException
-from app.curriculum import MISSIONS, check_answer, mission_by_id, public_step
+from app.curriculum import MISSIONS, assess_answer, mission_by_id, public_step
 from app.tutor import respond
+from app.curriculum import CURRENT_VERSION
+from app.services.progress import progress_data
 
 _locks = [Lock() for _ in range(64)]
 _requests = defaultdict(list)
 
-def progress_data(store, who):
-    results = {key:value for key,value in store.results(who).items() if mission_by_id(key)}
-    active = store.active_missions(who)
-    completed = list(results)
-    evidence = [item for result in results.values() for item in result["evidence"]]
-    xp = sum(m["xp"] for m in MISSIONS if m["id"] in results)
-    next_id = next((m["id"] for m in MISSIONS if m["id"] not in results), None)
-    if next_id is None:
-        # After the first pass, revisit the task with least independent evidence.
-        next_id = min(MISSIONS, key=lambda m: sum(e["independent"] for e in results[m["id"]]["evidence"]) / max(1, len(results[m["id"]]["evidence"])))["id"]
-    return {"completed": completed, "xp": xp, "evidence": evidence, "recommended": next_id, "results": results, "total_missions": len(MISSIONS), "available": [m["id"] for m in MISSIONS if not m["requires"] or m["requires"] in results or m["id"] in results or m["id"] in active]}
-
-
 def run_payload(run_id, mission, state):
     return {"run_id": run_id, "mission_id": mission["id"], "chapter_id": mission["chapter_id"], "index": state["index"], "revision": state["revision"], "completed": state["completed"],
-            "step": None if state["completed"] else public_step(mission["steps"][state["index"]]), "steps_count": len(mission["steps"]), "evidence": state["evidence"]}
+            "step": None if state["completed"] else public_step(mission["steps"][state["index"]], state["hints"].get(mission["steps"][state["index"]]["id"],0)), "steps_count": len(mission["steps"]), "evidence": state["evidence"], "mode":mission["mode"], "reward_coins":state.get("reward_coins",0), "curriculum_version":state.get("curriculum_version",1)}
 
 
 def start_run(store, mission_id, who):
@@ -35,7 +24,7 @@ def start_run(store, mission_id, who):
     if index and MISSIONS[index - 1]["id"] not in store.results(who) and mission_id not in store.results(who) and mission_id not in store.active_missions(who):
         raise HTTPException(403, "先完成前一个任务，再来挑战吧。")
     run_id, state = store.start(who, mission["id"])
-    return {**run_payload(run_id, mission, state), "message": "欢迎回来，我们从上次的位置继续。" if state["index"] else mission["intro"]}
+    return {**run_payload(run_id, mission, state), "progress": progress_data(store, who), "message": "欢迎回来，我们从上次的位置继续。" if state["index"] else mission["intro"]}
 
 
 def submit_turn(store, body, who):
@@ -55,19 +44,28 @@ def submit_turn(store, body, who):
             raise HTTPException(409, "这个任务已完成，请返回小镇。")
         if state["revision"] != body.revision:
             raise HTTPException(409, "任务状态已更新，请重新进入任务后继续。")
-        step = mission["steps"][state["index"]]
+        if not mission:
+            raise HTTPException(404, "这条练习已不在当前课程中。")
+        if state.get("curriculum_version",1) < CURRENT_VERSION:
+            raise HTTPException(409,"课程已更新，请重新进入练习，从新版第一题开始。")
+        step_index = state["index"]
+        step = mission["steps"][step_index]
         sid = step["id"]
         if body.action == "answer" and not body.answer.strip():
             raise HTTPException(422, "先写下或选择你的答案吧。")
         if body.action == "ask" and not body.question.strip():
             raise HTTPException(422, "先写下你想问的问题吧。")
         correct = False
+        assessment = None
         if body.action == "answer":
             state["attempts"][sid] = state["attempts"].get(sid, 0) + 1
-            correct = check_answer(step, body.answer)
+            if len(body.answer) > step.get("max_length",300):
+                raise HTTPException(422,"回答过长，请围绕当前问题简短作答。")
+            evaluation = assess_answer(step, body.answer)
+            correct, assessment = evaluation["correct"], evaluation["assessment"]
         elif body.action in {"hint", "example", "ask"}:
             state["hints"][sid] = state["hints"].get(sid, 0) + 1
-        tutor = respond(step, state, body.action, body.answer, body.question, correct)
+        tutor = respond(step, state, body.action, body.answer, body.question, correct, assessment)
         if correct:
             independent = state["attempts"][sid] == 1 and not state["hints"].get(sid)
             state["evidence"].append({"step_id": sid, "skill": step["skill"], "independent": independent, "attempts": state["attempts"][sid], "hints": state["hints"].get(sid, 0)})
@@ -76,6 +74,14 @@ def submit_turn(store, body, who):
         elif body.action == "answer":
             # Corrective feedback is help too, even without pressing the hint button.
             state["hints"][sid] = state["hints"].get(sid, 0) + 1
-        if not store.save(body.run_id, who, mission_id, state, body.revision):
+        event = {
+            "step_id": sid, "step_index": step_index, "action": body.action,
+            "answer": body.answer if body.action == "answer" else "",
+            "question": body.question if body.action == "ask" else "",
+            "correct": correct if body.action == "answer" else None,
+            "attempt_count": state["attempts"].get(sid, 0), "hint_count": state["hints"].get(sid, 0),
+            "feedback": {**tutor,"assessment":assessment},
+        }
+        if not store.save(body.run_id, who, mission_id, state, body.revision, event=event):
             raise HTTPException(409, "任务状态已更新，请重新进入后继续。")
-        return {**run_payload(body.run_id, mission, state), "correct": correct, "tutor": tutor, "progress": progress_data(store, who)}
+        return {**run_payload(body.run_id, mission, state), "correct": correct, "assessment":assessment, "tutor": tutor, "progress": progress_data(store, who)}

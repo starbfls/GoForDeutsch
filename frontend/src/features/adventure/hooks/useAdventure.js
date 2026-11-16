@@ -77,6 +77,7 @@ export default function useAdventure(user) {
     try {
       const { data: result } = await learningApi.start(chosen.id);
       setRun(result);
+      if (result.progress) setProgress(result.progress);
       setMission(chosen);
       setScene(destination);
       setPending(null);
@@ -145,6 +146,7 @@ export default function useAdventure(user) {
         action,
         source: result.tutor.source,
         strategy: result.tutor.strategy,
+        assessment: result.assessment,
       });
       if (result.correct) setPending(result);
       else setRun(result);

@@ -1,24 +1,24 @@
 export const SCENE_GUIDES = {
   bakery: {
     welcome:
-      "Guten Tag! 这里是 Bäckerei。先看看柜台：你能找到 Brötchen 吗？准备好后，我们再练习点单。",
+      "Guten Tag! 这里是 Bäckerei。今天先读柜台信息，再回答店员。答案的证据就在原文里。",
     observe:
-      "Schau mal! 先分清整条 Brot、小圆面包 Brötchen 和打结的 Brezel。开始练习后，我会陪你一步步点单。",
-    goal: "认识食物，练习礼貌点单",
+      "Schau mal! 先找问题中的关键词，再回到原文找价格、数量或去向。我给线索，你来回答店员。",
+    goal: "阅读 · 读材料，回答店员",
   },
   park: {
     welcome:
-      "Willkommen im Park! 看看树、长椅和水面。先找一个你认识的东西，再试着用德语描述它。",
+      "Willkommen im Park! 看看树、长椅和水面。读线索猜单词，想不起来时再要一条线索。",
     observe:
-      "Ich sehe … 你可以从这句话开始。先观察颜色和位置，等你准备好再进入练习。",
-    goal: "描述颜色、位置和活动",
+      "根据用途或特征回忆德语单词。需要时点“再给一条线索”，不会扣金币。",
+    goal: "单词 · 根据线索猜词",
   },
   school: {
     welcome:
-      "Hallo! 我们到 Schule 了。今天用角色 Alex 的信息介绍自己，也认识课表和学习用品。",
+      "Hallo! 我们到 Schule 了。今天用角色 Alex 的信息练习写话，最后完成一段自我介绍。",
     observe:
-      "Ich heiße Mia. 轮到 Alex 时，可以怎样介绍？先想一句，开始练习后再试一试。",
-    goal: "介绍角色，表达课程喜好",
+      "Ich heiße Mia. 先写一句，再写两句，最后把名字、年龄、课程和活动喜好连成一段。",
+    goal: "写作 · 从一句话到自我介绍",
   },
 };
 export function sceneGuide(id) {

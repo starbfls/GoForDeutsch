@@ -12,7 +12,7 @@ class TurnRequest(BaseModel):
     run_id: str
     revision: int
     action: Literal["answer", "hint", "example", "ask"]
-    answer: str = Field(default="", max_length=300)
+    answer: str = Field(default="", max_length=1200)
     question: str = Field(default="", max_length=300)
 
 

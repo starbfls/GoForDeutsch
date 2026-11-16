@@ -1,7 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, LockKeyhole, LoaderCircle } from "lucide-react";
+import {
+  ArrowUpRight,
+  LockKeyhole,
+  LoaderCircle,
+  Croissant,
+  TreeDeciduous,
+  GraduationCap,
+} from "lucide-react";
 import { WORLD, mapCamera, mapPoint } from "./camera";
 import { MAP_LOCATIONS } from "./locations";
+const PLACE_ICONS = {
+  bakery: Croissant,
+  park: TreeDeciduous,
+  school: GraduationCap,
+};
 export default function TownMap({ scenes, travel, onSelect, available, busy }) {
   const viewport = useRef(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -15,7 +27,11 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
     observer.observe(viewport.current);
     return () => observer.disconnect();
   }, []);
-  const camera = mapCamera(size.width, size.height, travel?.map);
+  const camera = mapCamera(
+    size.width,
+    size.height,
+    (travel && MAP_LOCATIONS[travel.id]?.focus) || travel?.map,
+  );
   return (
     <section
       ref={viewport}
@@ -37,7 +53,12 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
       />
       {size.width > 0 &&
         scenes.map((scene) => {
-          const point = mapPoint(camera, MAP_LOCATIONS[scene.id] || scene.map);
+          const location = MAP_LOCATIONS[scene.id] || scene.map;
+          const point = mapPoint(
+            camera,
+            size.width < 340 && location.compact ? location.compact : location,
+          );
+          const PlaceIcon = PLACE_ICONS[scene.id];
           return (
             <button
               key={scene.id}
@@ -48,6 +69,11 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
               disabled={busy}
               aria-label={`进入${scene.location}`}
             >
+              {PlaceIcon && (
+                <span className="map-pin-icon" aria-hidden="true">
+                  <PlaceIcon size={25} strokeWidth={1.8} />
+                </span>
+              )}
               <span className="map-pin-copy">
                 <strong>{scene.location}</strong>
                 <span lang="de">{scene.de}</span>

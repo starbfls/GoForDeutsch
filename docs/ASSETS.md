@@ -1,60 +1,52 @@
-# Generated visual assets
+# 当前插画与 Mia 素材
 
-Generated with the built-in image generation tool, using the user's two Mia references for character identity and expressions. Runtime animation is implemented with CSS; expressions are selected from the atlas, rather than generated during a student's session. No image-generation API key is needed at runtime.
+素材由内置 image_gen 工具生成和编辑，均保存在 D 盘原项目。运行学习页面不需要图片 API Key，也不会实时生成角色图片。
 
-| File | Purpose |
-| --- | --- |
-| `frontend/public/assets/town.png` | Illustrated town map |
-| `frontend/public/assets/bakery.png` | Bakery interior |
-| `frontend/public/assets/mia-expressions.png` | Transparent 3-column, 2-row expression atlas |
+## 场景
 
-Atlas order: smile, thinking, talking; happy, encourage, celebrate. Each frame has a 2:3 aspect ratio. The final atlas has genuine alpha transparency and uses the same framing across expressions.
+| 文件（相对于 frontend/public/assets/） | 尺寸 | 内容 |
+| --- | --- | --- |
+| town-panorama.png | 2172 × 724 | 明亮小镇全景：红色木构面包店、公园水池和喷泉、带钟楼的砖红学校 |
+| bakery-unit1.png | 1536 × 1024 | 与地图配套的面包店内部、条纹遮阳棚和面包柜台 |
+| park-unit1.png | 1536 × 1024 | 与地图配套的公园；远景可见相同的面包店和学校 |
+| school-unit1.png | 1536 × 1024 | 阳光明亮的教室，窗外为同一公园 |
 
-## Prompts
+风格参考用户提供的两张 Gemini 图片，统一蓝天、鲜绿植被、砖红建筑和清晰的手绘动画线条。完整提示词与参考图用途见 [asset-prompts-bright-v4.json](asset-prompts-bright-v4.json)。
 
-### Mia atlas
+地图按钮继续使用现有 Lucide 图标系统。按钮位置、镜头焦点和窄屏位置在 frontend/src/features/adventure/map/locations.js；不绘制连接线。第一次点击地点进入场景，第二次明确开始练习。登录和注册背景同步使用当前全景。
 
-Use case: identity-preserve / game character expression atlas. Reference images: the supplied colored brown-haired schoolgirl and pencil expression sheet are character identity and expression references. Create a polished anime visual-novel character sprite atlas for Mia, same brown shoulder-length hair with short side ponytail on viewer right and pink bow, amber eyes, white short-sleeve school blouse with pink collar trim and pink necktie. Age-appropriate friendly school adventure for ages 10–15. ONE square image, exactly 3 equal columns and 2 equal rows, no gaps, no labels, no signature, no lettering. Six independent waist-up portraits of the SAME character on ACTUAL TRANSPARENT background. Each cell has identical camera framing, head size, eye-line and centered torso, all art safely inside its own cell with transparent margins. Row1 left: relaxed warm smile hands at sides. Row1 center: gentle thinking head tilt hand near chin. Row1 right: speaking friendly open mouth. Row2 left: happy closed-eye smile. Row2 center: encouraging confident smile one index finger raised. Row2 right: excited celebrating small fist gesture. Consistent face, outfit and ponytail across every frame; hands anatomically clear; no extra bodies, no panel borders. Final is a production sprite atlas; perfectly aligned cell grid is critical.
+## Mia：一套服装、一张图集
 
-### Transparency refinement
+唯一运行时角色图片：
 
-Use case: background-extraction. Edit target: the supplied six-expression Mia sprite atlas. Remove ONLY the white/light gray background and the faint panel divider lines from all six cells. Actual transparent pixels alpha=0 outside each character are required, not a translucent white rectangle and not a checkerboard drawing. Keep characters fully opaque including their white shirts and facial highlights. Preserve exact character appearance, expressions, same original 3-column by 2-row grid, relative alignment, canvas aspect ratio and all framing. Do not move or resize individual characters. No additional art or text. This will be layered directly over a colored game background; all surrounding negative space must be genuinely transparent.
+`frontend/public/assets/characters/mia/school-uniform.png`
 
-### Town
+1182 × 1330，真实 RGBA 透明 PNG，4 列 × 3 行。包含 11 种表情和默认表情的闭眼帧。角色保持棕色短发、侧马尾、粉色蝴蝶结、白色校服、粉色领带与蓝色裙子的原有设计。
 
-Use case: illustration-story. Asset type: background for a playable 2D browser German-learning town map for Chinese-speaking students ages 10–15. Wide landscape 3:2 illustration with a clean hand-painted anime adventure game aesthetic, soft cream daylight, sage green foliage, warm terracotta and butter-yellow buildings. Isometric / oblique bird's-eye German village square, winding pale cobblestone path connecting a cozy red-awning bakery near lower center, a school building in upper right, park with pond on right, small bookshop on left, clock tower at upper center. Detailed but uncluttered, inviting youthful sophisticated visual novel scenery, no people needed. Clear building silhouettes and generous quiet space around buildings for HTML hotspot labels overlaid separately. The bakery has a warm ochre plaster facade, red-and-cream striped awning and bread visible through windows. Trees in soft mint and deep forest green, spring flower beds, distant hills and pale blue sky. No letters, labels, words, UI, logos, watermark or frame. Not photorealistic, not blocky 3D, not toddler cartoon. Entire frame beautifully illustrated.
+| 行 | 第 1 列 | 第 2 列 | 第 3 列 | 第 4 列 |
+| --- | --- | --- | --- | --- |
+| 1 | smile 默认微笑 | blink 闭眼帧 | thinking 思考 | talking 说话 |
+| 2 | happy 开心微笑 | encourage 鼓励 | celebrate 庆祝 | wink 眨眼招手 |
+| 3 | surprised 惊讶 | proud 欣慰 | ponder 好奇思考 | focus 友好专注 |
 
-### Bakery
+focus 已替换原来半闭眼、托脸的状态，改为睁眼、眉毛舒展、轻微微笑、手放在下巴附近的专注表情。教学用途和后端表情名称保持一致。
 
-Use case: illustration-story. Asset type: interactive scene background for 2D German-learning adventure website. Wide landscape 3:2 hand-painted anime game background of a cozy German village bakery interior, warm cream and golden apricot daylight, sage green trim, terracotta floor, red-and-cream striped outside awning visible through window. Front view of a wooden bakery counter across lower-middle frame, baskets of bread rolls, loaves, pretzels and croissants, tasteful chalkboard with no writing, shelves, window with foliage. Leave middle counter surface clean for interactive product buttons to be overlaid. Left third will have a character portrait placed over it, so keep that region relatively quiet. Gentle painterly texture, crisp appealing shapes, warm storybook visual novel quality suitable for ages10–15. No people, no text, no prices, no UI, no letters, no watermark.
+- frontend/src/components/miaAppearance.js：图片路径、图集行列、每个表情的格子与中文名称、显示缩放和闭眼帧对齐补偿。
+- frontend/src/components/Mia.jsx：组合当前表情与眨眼，不再维护多套旧图集映射。
+- frontend/src/components/useMiaBlink.js：随机眨眼间隔、后台暂停和减少动态偏好。
 
-## 2026-11-10: school, park and three extra expressions
+图集留有透明间隔，避免裁切时带出相邻角色的头发或手指；闭眼帧通过显示坐标补偿对齐默认表情，按比例适配不同人物尺寸。浅色、蓝色底的十二格预览和真实场景已检查。
 
-Built-in image generation produced `frontend/public/assets/school.png`, `park.png` and `mia-extra.png`. Prompts are saved in [asset-prompts-v2.json](asset-prompts-v2.json).
+整合及两次修订使用内置图片工具完成；原始提示词、眨眼修订与最终间距修订见 [asset-prompts-mia-unified.json](asset-prompts-mia-unified.json)。预览：artifacts/mia-expressions-review.png。
 
-School and park use restrained watercolor/gouache, pencil lines, paper texture, coherent perspective and less decorative clutter. These are generated illustrations, not represented as human-made artwork.
+以后每套服装可沿用同样的表情名称与格子顺序。商店、购买、换装和新伙伴尚未实现，本次只整理现有 Mia。
 
-The supplementary atlas has three columns in one row: wink, surprised discovery, proud/relieved smile. It is composited through CSS with a short entrance fade. The alpha channel and actual scene compositing were checked. Existing six expressions remain available.
+## 已清理的旧素材
 
-The supplied additional gallery URL returned HTTP 403 to automated reading. Identity was therefore kept consistent with the user's earlier reference images and the already established Mia atlas; no claim is made that the blocked gallery was fully inspected.
+已删除五张停用场景：town.png、town-unit1.png、bakery.png、park.png、school.png。
 
+已删除四张旧角色图：mia-expressions.png、mia-expressions-v3.png、mia-extra.png、mia-idle.png。
 
-## 2026-11-10: Kennenlernen UI redesign
+这些旧文件合计 24,554,766 字节；运行代码和浏览器检查脚本已改用当前五个素材文件。重新构建会同时清除 dist 中的旧副本。
 
-Generated with the built-in image generation tool; no runtime image API key is needed. Full generation briefs and reference constraints: [asset-prompts-ui3.json](asset-prompts-ui3.json).
-
-| Asset in frontend/public/assets | Use |
-| --- | --- |
-| town-unit1.png | Larger town map, displayed through a moving camera |
-| bakery-unit1.png | Matching bakery interior |
-| park-unit1.png | Matching pond, bench and picnic area |
-| school-unit1.png | Matching classroom |
-| mia-expressions-v3.png | ONE transparent 3-column, 2-row atlas: wink / surprised / proud; ponder / focus / empty |
-| mia-idle.png | Two matching neutral portraits: eyes open / eyes closed |
-
-The new atlas replaces the previous supplemental atlas at runtime and includes two thinking expressions. The original six-expression atlas remains available. Default idle portraits alternate briefly for a blink at random intervals; there is no continuous breathing or floating motion. Expressions fade briefly when changed. All runtime references use D-drive project assets. Temporary C-drive generation outputs for this redesign were removed after copying at the user's request.
-
-
-## Expanded town panorama
-
-Built-in image generation edited town-unit1.png into frontend/public/assets/town-panorama.png (2172 × 724, 3:1), adding continuous roads, houses, gardens and trees at the sides. This is newly painted scenery, rather than an enlarged copy of the original. The main bakery, school and park remain identifiable in the central town. Generation brief: [asset-prompts-panorama.json](asset-prompts-panorama.json). The selected asset is saved in the D-drive project; its temporary C-drive output was deleted at the user's request.
+选中的生成结果已从工具的 C 盘输出目录移入 D 盘；本轮草稿、缓存和测试环境在验证后清理。用户原始参考图片保持原位。

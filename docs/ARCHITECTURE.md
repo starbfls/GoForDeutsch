@@ -15,7 +15,7 @@
 - `src/features/adventure/styles/`：按 foundation（排版和通用控件）、map（地图）、learning（答题）、scene（场景预览与练习面板）、overlays（弹层）和 responsive（响应式）分开；账号样式位于 `features/auth/auth.css`。
 - `src/features/adventure/map/TownMap.jsx`：完整地图和地点按钮；`camera.js` 计算全图适配与进入场景的放大镜头，`locations.js` 单独配置按钮位置。
 - `src/features/flashcards/`：`WordCard.jsx` 负责悬停、键盘和点击展开；`ReviewCard.jsx` 负责翻卡；筛选、请求状态分别独立。
-- `src/components/Mia.jsx`：角色图集与表情选择；`useMiaBlink.js` 负责随机眨眼、计时清理、页面可见性和减少动态偏好；`VocabularyIcon.jsx`：词汇插图。
+- `src/components/Mia.jsx`：角色图集与表情选择；`miaAppearance.js` 集中配置唯一角色 PNG、十二个格子和眨眼对齐，后续服装沿用同一表情顺序；`useMiaBlink.js` 负责随机眨眼、计时清理、页面可见性和减少动态偏好；`VocabularyIcon.jsx`：词汇插图。
 - `src/services/api.js`：统一调用后端 API。
 
 ## 后端
@@ -25,16 +25,16 @@
 - `app/dependencies.py`：访客与登录用户身份。
 - `app/schemas.py`：请求字段与允许的操作。
 - `app/routers/learning.py`：学习接口，转发到执行服务。
-- `app/services/learning.py`：解锁、步骤执行、练习证据和积分规则。
+- `app/services/learning.py`：解锁、步骤执行、练习证据和金币规则。
 - `app/routers/flashcards.py`：词汇库、复习、收藏接口。
 - `app/services/review_schedule.py`：自评后的下次复习时间。
 - `app/repositories/flashcards.py`：本地复习记录；重复请求不会累计两次。
 - `app/learning_store.py`：原有任务进度、结果与 API 次数限制。
-- `app/tutor.py`：围绕当前任务的 LLM 提示与预设回退，不能改写积分或解锁。
+- `app/tutor.py`：围绕当前任务的 LLM 提示与预设回退，不能改写金币或解锁。
 
 ## 数据与配置边界
 
-目前所有功能只使用本机 `backend/data/learning.sqlite3`，首次访问时自动新增单词卡相关表。旧的任务表、账号文件和进度不会被重置。
+学习记录、金币和单词卡使用本机 `backend/data/learning.sqlite3`，账号使用 `backend/data/users.json`。启动时增量升级数据表；账号、完成结果和历史不会清空。课程版本更新时，旧未完成练习切换到新版第一题。
 
 只有需要跨设备、多学生集中管理或线上活动统计时，才需要另行安排服务与数据库。第一版不需要用户做这些配置。
 
@@ -46,4 +46,27 @@
 
 - frontend/src/features/companion/：MapCompanion.jsx（地图点击对话）、dialogue.js（中德混合欢迎、进度建议、场景观察与完成反馈）、companion.css（伙伴交互样式）。这些对话不发起模型请求。
 - SceneStage.jsx 组合场景背景、Mia 与对话；SceneLanding.jsx 单独负责第二次点击的练习入口；已有 SceneTasks.jsx 负责练习内的任务选择。
-- town-panorama.png 为内置图片工具沿左右扩展生成的 3:1 插画。地图相机用铺满方式渲染，保持比例；原有场景坐标在相机内部转换到扩展地图，不改任务或用户数据。
+- town-panorama.png 为内置图片工具参考用户新图片重画的明亮 3:1 插画（2172×724）。地图相机保持比例铺满视口，直接使用整张图的归一化坐标。locations.js 分别配置地点按钮、镜头焦点与窄屏紧凑位置，不改任务或用户数据。
+
+
+## 学习记录与 金币钱包
+
+- app/repositories/learning_schema.py：增量建表、升级前 SQLite 完整备份、已有进度和旧奖励迁移。
+- app/repositories/records.py：当前学习位置、追加式提交历史和按账号查询。
+- app/repositories/wallet.py：余额、奖励与收支流水，及未来商店的内部幂等扣款入口。
+- app/services/progress.py：把已保存状态汇总为单元/场景/关卡完成状态和可读编号；coins 表示当前金币余额，xp 为兼容别名。
+- app/learning_store.py：同一事务内保存任务、作答原文、当前位置、完成结果和金币，沿用旧的调用接口。
+- app/routers/learning.py：新增本人 progress/history/wallet/wallet/transactions 查询，身份由登录凭证决定。
+
+详细字段、迁移、分页和测试说明见 DATABASE.md。账号继续沿用 users.json 和稳定 UUID，不重写原账号系统。没有新加云服务或数据库凭证。
+
+## 阅读、猜词与写作（课程版本 2）
+
+- app/curriculum/builders.py：文字题与练习结构；bakery.py、park.py、school.py 分别编写阅读、猜词和写作。
+- app/curriculum/answers.py：已编写答案的规范化、短句检查与反馈；writing.py：段落信息清单、句数、词数和可识别的 A1 句型，不替学生重写段落。
+- public_step 过滤答案、写作规则、提示和目标词，只公开当前可见的猜词线索。帮助次数决定下一条线索是否出现。
+- learning_store.start 检测旧课程版本，将未完成练习切换到新版第一题，递增 revision；历史记录和钱包保持。services/learning.py 拒绝旧页面直接提交。
+- TaskContext.jsx：阅读原文、猜词线索和写作角色卡；WritingFeedback.jsx：段落评估清单；tasks.css：三种题型样式。
+- tutor.py：把规则评估作为辅导上下文；阅读引导找证据，猜词分步提示，写作给局部修改建议。评分、解锁和金币仍由服务器决定。
+
+题目与奖励设计见 UNIT1_DESIGN.md。参考项目 D:/web/praktikum-llm 仅作只读设计参考。

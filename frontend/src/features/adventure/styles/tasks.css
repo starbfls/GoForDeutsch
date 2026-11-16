@@ -1,0 +1,222 @@
+.task-context {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 2;
+  padding: 20px 22px;
+  border: 1px solid #c8d7bf;
+  border-radius: 12px;
+  background: #fffef8f7;
+  color: #233d2c;
+  max-height: 48%;
+  overflow: auto;
+  box-shadow: 0 3px 14px #23422b14;
+}
+.task-context h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 21px;
+  font-weight: 650;
+  margin: 0 0 14px;
+}
+.task-context ol,
+.task-context ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.task-context ol {
+  display: grid;
+  gap: 10px;
+}
+.task-context ol li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 5px 7px;
+  font-size: 19px;
+  line-height: 1.65;
+  border-radius: 6px;
+}
+.line-number {
+  flex-shrink: 0;
+  width: 19px;
+  font-size: 16px;
+  line-height: 2;
+  color: #67805f;
+}
+.task-context .evidence-line {
+  background: #e3edda;
+  box-shadow: inset 3px 0 #71945b;
+}
+.writing-context ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  font-size: 19px;
+}
+.lesson-scene.has-task-context {
+  min-height: 720px;
+}
+.has-task-context .lesson-mia {
+  left: 110px;
+  bottom: 135px;
+}
+.has-task-context .lesson-mia .mia-portrait {
+  width: 175px;
+}
+.task-speaker {
+  font-size: 17px;
+  font-weight: 600;
+  color: #536c4c;
+  margin-bottom: 7px;
+}
+.answer-word-count {
+  text-align: right;
+  margin: 7px 0 0;
+  font-size: 16px;
+  color: #536b4b;
+}
+.exercise-panel textarea.writing-answer {
+  min-height: 180px;
+}
+.exercise-panel textarea.word-answer {
+  min-height: 90px;
+}
+.writing-feedback {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #d0dbc6;
+  border-radius: 10px;
+  background: #f4f7ee;
+}
+.writing-stats {
+  font-size: 16px;
+  color: #4d6847;
+  margin-bottom: 10px;
+}
+.writing-feedback ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.writing-feedback li {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: #7c6745;
+  font-size: 17px;
+}
+.writing-feedback li.met {
+  color: #315c3e;
+}
+.writing-feedback p {
+  margin-top: 11px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #66502e;
+}
+.completion-coins {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 25px;
+  color: #916c21;
+  margin: 5px 0 20px;
+}
+.completion-replay {
+  font-size: 17px;
+  color: #526b49;
+  margin-bottom: 20px;
+}
+.coin-pill {
+  color: #89651f;
+}
+.coin-pill svg {
+  color: #af8328;
+}
+@media (max-width: 950px) {
+  .lesson-scene.has-task-context {
+    min-height: 690px;
+  }
+  .task-context {
+    max-height: 51%;
+  }
+  .has-task-context .lesson-mia {
+    left: 115px;
+    bottom: 125px;
+  }
+  .has-task-context .lesson-mia .mia-portrait {
+    width: 155px;
+  }
+}
+@media (max-width: 650px) {
+  .task-context {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+    padding: 17px 14px;
+    max-height: 51%;
+  }
+  .task-context h3 {
+    font-size: 19px;
+  }
+  .task-context ol li {
+    font-size: 18px;
+    gap: 7px;
+    padding: 3px;
+  }
+  .task-context ol {
+    gap: 6px;
+  }
+  .task-context .line-number {
+    font-size: 15px;
+    width: 16px;
+  }
+  .writing-context ul {
+    font-size: 17px;
+    gap: 8px;
+  }
+  .lesson-scene.has-task-context {
+    min-height: 680px;
+  }
+  .has-task-context .lesson-mia {
+    left: 100px;
+    bottom: 125px;
+  }
+  .has-task-context .lesson-mia .mia-portrait {
+    width: 145px;
+  }
+  .exercise-panel textarea.writing-answer {
+    min-height: 180px;
+  }
+}
+
+/* The companion stays in view while a longer writing response is revised. */
+@media (min-width: 951px) {
+  .lesson-layout:has(.has-task-context) {
+    align-items: start;
+  }
+  .lesson-scene.has-task-context {
+    height: 720px;
+    position: sticky;
+    top: 88px;
+  }
+}
+.exercise-panel[data-mode="writing"] .german-prompt {
+  margin: 16px 0;
+  padding: 12px 16px;
+}
+.writing-feedback ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 650px) {
+  .writing-feedback ul {
+    grid-template-columns: 1fr;
+  }
+}

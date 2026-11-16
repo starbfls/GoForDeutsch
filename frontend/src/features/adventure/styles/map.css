@@ -1,10 +1,13 @@
-/* Overview first; zoom into a destination only after it is selected. */
+/* One painted world, with HTML destinations positioned on its paths. */
 .town-stage {
   position: relative;
   width: 100%;
-  height: clamp(480px, calc(100dvh - 190px), 950px);
-  border-radius: 15px;
-  background: #e9eddc;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  min-height: 480px;
+  max-height: min(820px, calc(100dvh - 190px));
+  border-radius: 18px;
+  background: #bdeaf2;
   overflow: hidden;
   isolation: isolate;
 }
@@ -22,52 +25,80 @@
   transition: transform 0.9s cubic-bezier(0.3, 0.05, 0.2, 1);
 }
 .map-pin {
+  --pin-accent: #b85434;
+  --pin-tint: #fff0da;
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 10px 15px;
-  min-height: 62px;
-  background: #fffef7f5;
-  color: #254b36;
-  border: 1px solid #9bb39a;
-  border-radius: 10px;
+  gap: 11px;
+  padding: 11px 14px 12px;
+  min-height: 72px;
+  background: #fffefbf5;
+  color: #253c44;
+  border: 2px solid #ffffff;
+  border-bottom: 3px solid var(--pin-accent);
+  border-radius: 16px;
   transform: translate(-50%, -50%);
-  box-shadow: 0 3px 12px #2d3c2729;
+  box-shadow:
+    0 5px 0 #263e4a17,
+    0 9px 24px #1c405537;
   z-index: 3;
   white-space: nowrap;
   transition:
     box-shadow 0.18s,
+    background 0.18s,
+    translate 0.18s,
     opacity 0.18s;
 }
+.map-pin[data-chapter="park"] {
+  --pin-accent: #287646;
+  --pin-tint: #e6f5d9;
+}
 .map-pin[data-chapter="school"] {
-  transform: translate(-50%, 0);
+  --pin-accent: #356ab0;
+  --pin-tint: #e7f0ff;
+}
+.map-pin-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--pin-tint);
+  color: var(--pin-accent);
+  flex-shrink: 0;
 }
 .map-pin-copy {
   display: grid;
   text-align: left;
-  gap: 0;
 }
 .map-pin-copy strong {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 .map-pin-copy > span {
   font-size: 16px;
-  line-height: 1.4;
-  color: #4c6554;
+  line-height: 1.45;
+  color: #506474;
+}
+.map-pin > svg {
+  color: var(--pin-accent);
+  flex-shrink: 0;
 }
 .map-pin:hover {
-  box-shadow: 0 5px 18px #203a2c55;
-  border-color: #315c47;
-  background: #fffef7;
+  translate: 0 -3px;
+  background: #ffffff;
+  box-shadow:
+    0 5px 0 #263e4a17,
+    0 13px 28px #153e5055;
 }
-.map-pin.is-locked {
-  border-color: #bcbba7;
+.map-pin:focus-visible {
+  outline: 3px solid #234c82;
+  outline-offset: 4px;
 }
 .map-pin.is-locked > svg {
-  color: #776e50;
+  color: #7b817e;
 }
 .is-entering .map-pin {
   opacity: 0;
@@ -81,8 +112,9 @@
   align-items: center;
   gap: 10px;
   padding: 12px 18px;
-  border-radius: 10px;
-  background: #fffef7f0;
+  border: 1px solid #ffffff;
+  border-radius: 12px;
+  background: #fffefbf5;
   color: #254b36;
   font-size: 18px;
   box-shadow: 0 3px 12px #2d3c2720;
@@ -92,12 +124,22 @@
     height: auto;
     aspect-ratio: 3 / 2;
     min-height: 0;
-    border-radius: 11px;
+    border-radius: 13px;
   }
   .map-pin {
-    padding: 7px 10px;
+    padding: 6px 8px 7px;
     gap: 6px;
-    min-height: 53px;
+    min-height: 55px;
+    border-radius: 12px;
+  }
+  .map-pin-icon {
+    width: 28px;
+    height: 33px;
+    border-radius: 8px;
+  }
+  .map-pin-icon svg {
+    width: 20px;
+    height: 20px;
   }
   .map-pin-copy strong {
     font-size: 17px;
@@ -106,7 +148,7 @@
     font-size: 14px;
   }
   .map-pin > svg {
-    width: 15px;
+    width: 14px;
   }
   .map-travel-status {
     bottom: 12px;

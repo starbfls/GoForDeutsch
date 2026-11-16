@@ -2,7 +2,7 @@
   min-height: 100dvh;
   background:
     linear-gradient(90deg, #eef3e8ed, #fafbf6ef),
-    url("/assets/town-unit1.png") center/cover fixed;
+    url("/assets/town-panorama.png") center/cover fixed;
 }
 .auth-back {
   position: absolute;

@@ -1,34 +1,34 @@
-"""Chapter two: greetings, school supplies and a simple school day."""
-MISSIONS = [
-    {"id":"school-hello","title":"新同学的第一天","subtitle":"打招呼 · 介绍角色","duration":"约 5 分钟","xp":50,"skill":"自我介绍","icon":"👋",
-     "intro":"欢迎来到学校！今天用角色卡上的名字 Alex 练习介绍，不需要填写你自己的真实姓名。",
-     "steps":[
-        {"id":"greeting","type":"choice","prompt":"早上见到老师，可以怎样打招呼？","german":"Es ist Morgen. Guten …!","skill":"日常问候",
-         "options":[{"id":"morning","emoji":"🌤️","de":"Guten Morgen!","zh":"早上好"},{"id":"night","emoji":"🌙","de":"Gute Nacht!","zh":"晚安"},{"id":"bye","emoji":"👋","de":"Auf Wiedersehen!","zh":"再见"}],"answer":"morning",
-         "hints":["Morgen 是早晨。想一想，哪句是在早上见面时说的？","早上可以说 Guten Morgen!"],"explanation":"Guten Morgen! 是早上见面时的问候；Gute Nacht! 通常用于睡前道晚安。"},
-        {"id":"name-tiles","type":"tiles","prompt":"角色卡的名字是 Alex。排好词块，介绍这个角色。","german":"Wie heißt du?","skill":"介绍名字","tiles":["Alex.","heiße","Ich"],"answers":["Ich heiße Alex"],"example":"Ich heiße Alex.",
-         "hints":["Ich 是“我”，heiße 在这里表示“叫作”。","先放 Ich，再放 heiße，最后是角色名字。"],"explanation":"Ich heiße Alex. 表示“我叫 Alex”。Mein Name ist Alex. 也是自然的说法。"},
-        {"id":"age","type":"text","prompt":"角色卡写着“12 岁”。用德语介绍角色年龄。可以使用数字 12。","german":"Alex · 12 Jahre","skill":"介绍年龄","placeholder":"Ich bin …","answers":["Ich bin zwölf Jahre alt","Ich bin 12 Jahre alt","Ich bin zwölf","Ich bin 12"],"example":"Ich bin zwölf Jahre alt.",
-         "hints":["年龄用 Ich bin … Jahre alt.，这里的“12”是 zwölf。","把 12 放入 Ich bin … Jahre alt. 中。"],"explanation":"Ich bin zwölf Jahre alt. 表示“我十二岁”。德语用 bin（是）表达年龄，不用 habe（有）。"}
-     ]},
-    {"id":"school-bag","title":"帮 Mia 整理书包","subtitle":"文具词汇 · 我有……","duration":"约 5 分钟","xp":50,"skill":"学习用品","icon":"🎒",
-     "intro":"Mia 正在找上课要用的东西。一起认识铅笔、书和笔，再练习说“我有……”。",
-     "steps":[
-        {"id":"pencil","type":"choice","prompt":"Mia 要找一支 Bleistift。你会递给她什么？","german":"Wo ist mein Bleistift?","skill":"文具词汇","options":[{"id":"book","emoji":"📘","de":"das Buch","zh":"书"},{"id":"pencil","emoji":"✏️","de":"der Bleistift","zh":"铅笔"},{"id":"bag","emoji":"🎒","de":"der Rucksack","zh":"背包"}],"answer":"pencil",
-         "hints":["Bleistift 是可以写字、也可以用橡皮擦掉的文具。","找到写着 der Bleistift 的那一项。"],"explanation":"der Bleistift 是铅笔。记单词时，把冠词 der 一起记住。"},
-        {"id":"book-sentence","type":"tiles","prompt":"排好词块，说“我有一本书”。","german":"Was hast du?","skill":"表达拥有","tiles":["Buch.","ein","habe","Ich"],"answers":["Ich habe ein Buch"],"example":"Ich habe ein Buch.",
-         "hints":["“我有”是 Ich habe。Buch 是中性名词。","先放 Ich habe，再放 ein Buch。"],"explanation":"Ich habe ein Buch. 表示“我有一本书”。das Buch 在这里搭配 ein。"},
-        {"id":"pen-transfer","type":"text","prompt":"换成一支笔 Stift，用德语说“我有一支笔”。","german":"der Stift · 一支笔","skill":"冠词迁移","placeholder":"Ich habe …","answers":["Ich habe einen Stift","Einen Stift habe ich"],"example":"Ich habe einen Stift.",
-         "hints":["Stift 是阳性名词。放在 habe 后面表示“有一支笔”时，ein 要变成 einen。","句子开头是 Ich habe einen …"],"explanation":"Ich habe einen Stift. 中，阳性名词 Stift 作宾语，所以用 einen。和 ein Buch 比较着记。"}
-     ]},
-    {"id":"school-day","title":"看懂今天的课表","subtitle":"星期 · 课程 · 喜好","duration":"约 5 分钟","xp":60,"skill":"校园表达","icon":"📅",
-     "intro":"教室里贴着新课表。先认出星期和课程，再告诉 Mia 你喜欢的课程。",
-     "steps":[
-        {"id":"monday","type":"choice","prompt":"课表上的 Montag 是星期几？","german":"Montag: Deutsch und Sport","skill":"星期词汇","options":[{"id":"monday","emoji":"①","de":"Montag","zh":"星期一"},{"id":"friday","emoji":"⑤","de":"Freitag","zh":"星期五"},{"id":"sunday","emoji":"⑦","de":"Sonntag","zh":"星期日"}],"answer":"monday",
-         "hints":["Montag 是一周工作日的开始。","Montag 对应星期一。"],"explanation":"Montag 是星期一。课表里 Deutsch 是德语课，Sport 是体育课。"},
-        {"id":"like-sport","type":"tiles","prompt":"排好词块，说“我喜欢体育”。","german":"Was magst du?","skill":"表达喜好","tiles":["Sport.","mag","Ich"],"answers":["Ich mag Sport"],"example":"Ich mag Sport.",
-         "hints":["“我喜欢”是 Ich mag。","按照“我—喜欢—体育”的顺序来排。"],"explanation":"Ich mag Sport. 表示“我喜欢体育”。把 Sport 换成 Deutsch，也可以表达喜欢德语。"},
-        {"id":"like-german","type":"text","prompt":"换一门课，用德语说“我喜欢德语”。","german":"Deutsch · 德语","skill":"独立迁移","placeholder":"用刚才的句型试一试…","answers":["Ich mag Deutsch","Deutsch mag ich","Ich lerne gern Deutsch","Ich lerne gerne Deutsch"],"example":"Ich mag Deutsch.",
-         "hints":["仍然可以用 Ich mag …，只需要换成 Deutsch。","把 Ich mag Sport. 里的 Sport 换成 Deutsch。"],"explanation":"Ich mag Deutsch. 把同一个表达换到新的课程上，就能说出自己的喜好。学校练习完成，可以去单词卡继续复习。"}
-     ]}
-]
+"""Writing: short classroom messages leading to a role self-introduction."""
+from .builders import mission, text_step
+ROLE={"title":"角色卡 · Alex","facts":["名字：Alex","年龄：14 岁","喜欢的课程：Deutsch","喜欢的活动：Fußball spielen"]}
+SCHEDULE={"title":"Alex 的星期一","facts":["Montag：Deutsch","喜欢德语课","用两句话介绍课表和喜好"]}
+NAME={"id":"name","label":"介绍名字","patterns":[r"ich heisse alex",r"mein name ist alex",r"ich bin alex"]}
+AGE={"id":"age","label":"介绍年龄","patterns":[r"ich bin (14|vierzehn)( jahre( alt)?)?"]}
+SUBJECT={"id":"subject","label":"表达课程喜好","patterns":[r"ich mag deutsch",r"deutsch mag ich",r"ich lerne gerne? deutsch",r"mein lieblingsfach ist deutsch"]}
+HOBBY={"id":"hobby","label":"表达活动喜好","patterns":[r"ich spiele gerne? fussball",r"ich spiele fussball gerne?",r"mein hobby ist fussball",r"fussball ist mein hobby"]}
+MONDAY={"id":"schedule","label":"说明星期一有德语课","patterns":[r"am montag (habe ich|haben wir) deutsch",r"(ich habe|wir haben) am montag deutsch",r"montags (habe ich|haben wir) deutsch"]}
+def write(sid,prompt,german,example,hints,explanation,**options):
+    options.setdefault("brief",ROLE)
+    return text_step(sid,prompt,german,example,hints,explanation,max_length=1000,**options)
+MISSIONS=[
+mission("school-hello","写一句得体的回应",50,"writing","使用角色 Alex 的信息练习，不需要填写真实个人资料。",[
+write("greeting","早上遇到老师，写一句合适的问候。","Du triffst deine Lehrerin am Morgen.","Guten Morgen!",
+["先考虑时间：这是早上。","Morgen 是早晨，可以和 Guten 搭配。"],"Guten Morgen! 适合早上的问候。",answers=["Guten Morgen","Guten Morgen Frau Müller","Guten Morgen Herr Müller","Guten Morgen Mia"]),
+write("name","同学问名字。写一句话介绍角色 Alex。","Wie heißt du?","Ich heiße Alex.",
+["用 Ich 开头，选择介绍名字的动词。","也可以用 Mein Name ist …。"],"你用完整句子介绍了角色名字。",answers=["Ich heiße Alex","Mein Name ist Alex","Ich bin Alex"]),
+write("age","介绍 Alex 的年龄，用数字或德语数词都可以。","Wie alt bist du?","Ich bin 14 Jahre alt.",
+["这里需要 Ich bin，不是 Ich habe。","年龄后可以加 Jahre alt。"],"Ich bin 14 Jahre alt. 用 sein 表达年龄。",answers=["Ich bin 14 Jahre alt","Ich bin vierzehn Jahre alt","Ich bin 14","Ich bin vierzehn"])]),
+mission("school-bag","把课堂需要写出来",50,"writing","写清自己有什么、礼貌借笔，再说明物品位置。",[
+write("pencil-choice","打开笔袋，写一句“我有一支铅笔”。","Was hast du in deinem Mäppchen?","Ich habe einen Bleistift.",
+["用 Ich habe 开始；Bleistift 是阳性名词。","这个句子里，用 einen Bleistift。"],"你用 habe 和 einen Bleistift 说明物品。",answers=["Ich habe einen Bleistift","In meinem Mäppchen habe ich einen Bleistift"]),
+write("have-pen","你忘带笔了。写一句话，礼貌地向同桌借一支笔。","Du brauchst einen Stift. Frag höflich.","Kann ich bitte einen Stift haben?",
+["用 Kann ich … haben? 表达请求。","把 bitte 放进句子，笔用 einen Stift。"],"这是可以实际使用的课堂请求。",answers=["Kann ich bitte einen Stift haben","Kann ich einen Stift haben bitte","Kannst du mir bitte einen Stift geben","Ich möchte einen Stift bitte","Ich möchte bitte einen Stift"]),
+write("bag-location","告诉同学：我的书在背包里。","Wo ist dein Buch?","Mein Buch ist im Rucksack.",
+["先写 Mein Buch ist，再补地点。","已经在里面，用 im Rucksack。"],"你说明了物品所在的位置。",answers=["Mein Buch ist im Rucksack","Im Rucksack ist mein Buch","Mein Buch ist in dem Rucksack"])]),
+mission("school-day","写一段自我介绍",60,"writing","从两句话过渡到一段文字。先写清信息，再根据反馈修改。",[
+write("day-choice","用两句话说明：星期一有德语课，而且你喜欢德语。","Erzähl von deinem Montag.","Am Montag habe ich Deutsch. Ich mag Deutsch.",
+["第一句写课表，第二句表达喜好。","检查 Montag、Deutsch 和课程喜好是否都出现了。"],"两句话分别承担课表和喜好信息。",brief=SCHEDULE,rubric={"checks":[MONDAY,SUBJECT],"min_sentences":2,"max_words":60}),
+write("like-sport","回答新同桌的两个问题：喜欢什么课，喜欢做什么活动？写两句话。","Was magst du? Was spielst du gern?","Ich mag Deutsch. Ich spiele gern Fußball.",
+["一条信息一句话：先课程，再活动。","可以用 Ich mag … 和 Ich spiele gern …。"],"你写出了课程和活动喜好。",rubric={"checks":[SUBJECT,HOBBY],"min_sentences":2,"max_words":60}),
+write("like-german","写一段 4—5 句的角色自我介绍，包含名字、年龄、课程和活动喜好。","Stell dich als Alex vor.","Hallo! Ich heiße Alex. Ich bin 14 Jahre alt. Ich mag Deutsch. Ich spiele gern Fußball.",
+["对照角色卡，检查四条信息有没有写全。","每条信息用一句话；检查 bin 和 habe 的搭配。"],"你把角色信息写成了一段自我介绍。",rubric={"checks":[NAME,AGE,SUBJECT,HOBBY],"min_sentences":4,"max_words":80})])]

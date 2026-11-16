@@ -3,11 +3,12 @@ from .bakery import MISSIONS as BAKERY
 from .school import MISSIONS as SCHOOL
 from .park import MISSIONS as PARK
 from .vocabulary import VOCABULARY as WORDS
-from .answers import check_answer, normalize
+from .answers import check_answer, normalize, assess_answer
 from .units import CHAPTERS, UNITS, LESSON_TITLES, LESSON_INTROS
 from .mnemonics import MEMORY
 
 VOCABULARY = [{**word,"unit_id":"kennenlernen","mnemonic":MEMORY[word["id"]][0],"example_zh":MEMORY[word["id"]][1]} for word in WORDS]
+CURRENT_VERSION = 2
 MISSIONS=[]
 for chapter, lessons in zip(CHAPTERS, [BAKERY,PARK,SCHOOL]):
     for lesson in lessons:
@@ -18,9 +19,13 @@ def mission_by_id(mission_id):
     return next((mission for mission in MISSIONS if mission["id"]==mission_id),None)
 
 
-def public_step(step):
-    private={"answer","answers","target","hints","example","explanation"}
-    return {key:value for key,value in step.items() if key not in private}
+def public_step(step, hint_count=0):
+    private={"answer","answers","target","hints","example","explanation","rubric","clues","evidence_line"}
+    public = {key:value for key,value in step.items() if key not in private}
+    if step.get("mode") == "vocabulary":
+        public["clues"] = step["clues"][:min(1+hint_count,len(step["clues"]))]
+        public["clues_count"] = len(step["clues"])
+    return public
 
 
 def public_missions():

@@ -93,10 +93,23 @@ export default function AnswerInput({ game, step }) {
             id="german-answer"
             value={text}
             onChange={(event) => setText(event.target.value)}
-            maxLength={300}
+            maxLength={step.max_length || 300}
+            rows={step.mode === "writing" ? 4 : 2}
+            className={
+              step.mode === "writing"
+                ? "writing-answer"
+                : step.mode === "vocabulary"
+                  ? "word-answer"
+                  : ""
+            }
             placeholder={step.placeholder}
             disabled={busy || Boolean(pending)}
           />
+          {step.mode === "writing" && (
+            <p className="answer-word-count">
+              {(text.match(/[\p{L}\p{N}]+/gu) || []).length} 词
+            </p>
+          )}
           <div className="umlaut-keys">
             {["ä", "ö", "ü", "ß"].map((letter) => (
               <button

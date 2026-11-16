@@ -150,8 +150,7 @@ try {
     "bakery-unit1.png",
     "park-unit1.png",
     "school-unit1.png",
-    "mia-idle.png",
-    "mia-expressions-v3.png",
+    "characters/mia/school-uniform.png",
   ])
     assert(
       await evaluate(`fetch('/assets/${asset}').then(r=>r.status===200)`),
@@ -248,7 +247,7 @@ try {
   await click(".scene-companion-button");
   assert(
     await evaluate(
-      `document.querySelector('.dialogue-box').innerText.includes('Schau mal')`,
+      `document.querySelector('.dialogue-box').innerText.includes('关键词')`,
     ),
     "Mia encourages observation",
   );
@@ -290,13 +289,56 @@ try {
       `Boolean(document.querySelector('.scene-${mission.chapter}'))&&!document.querySelector('.scene-transition')`,
       "scene " + mission.id,
     );
-    if (m === 3 || m === 6)
-      await screenshot(m === 3 ? "ui-park-lesson.png" : "ui-school-lesson.png");
+    await until(
+      `document.querySelector('.exercise-panel')?.dataset.step===${JSON.stringify(mission.steps[0].id)}`,
+      "first task ready " + mission.id,
+    );
+    if (m === 0 || m === 3 || m === 6) {
+      const mode = m === 0 ? "reading" : m === 3 ? "vocabulary" : "writing";
+      assert(
+        await evaluate(
+          `Boolean(document.querySelector('.task-context.'+${JSON.stringify(mode === "reading" ? "reading-context" : mode === "vocabulary" ? "clue-context" : "writing-context")}))`,
+        ),
+        "context for " + mode,
+      );
+      await screenshot("ui-" + mode + ".png");
+    }
     for (const step of mission.steps) {
       await until(
         `document.querySelector('.exercise-panel')?.dataset.step===${JSON.stringify(step.id)}`,
         "step " + step.id,
       );
+      if (m === 3 && step === mission.steps[0]) {
+        await evaluate(
+          `{const input=document.querySelector('#german-answer');Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(input,'Katze');input.dispatchEvent(new Event('input',{bubbles:true}));}`,
+        );
+        await click(".exercise-bottom > .primary-button");
+        await until(
+          `document.querySelector('.clue-context')?.innerText.includes('2/3')&&!document.querySelector('.exercise-bottom > .primary-button').disabled`,
+          "wrong guess reveals clue",
+        );
+        await screenshot("ui-vocabulary-clues.png");
+      }
+      if (m === 8 && step === mission.steps[2]) {
+        await evaluate(
+          `{const input=document.querySelector('#german-answer');Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(input,'Ich heiße Alex. Ich bin 14 Jahre alt. Ich mag Deutsch.');input.dispatchEvent(new Event('input',{bubbles:true}));}`,
+        );
+        await click(".exercise-bottom > .primary-button");
+        await until(
+          `Boolean(document.querySelector('.writing-feedback'))&&!document.querySelector('.exercise-bottom > .primary-button').disabled`,
+          "writing revision checklist",
+        );
+        assert(
+          await evaluate(
+            `document.querySelector('.writing-feedback').innerText.includes('表达活动喜好')`,
+          ),
+          "missing writing criterion",
+        );
+        await evaluate(
+          `document.querySelector('.writing-feedback').scrollIntoView({block:'center'})`,
+        );
+        await screenshot("ui-writing-feedback.png");
+      }
       if (step.type === "choice")
         await click(`.choice-option:nth-child(${step.choice + 1})`);
       else if (step.type === "tiles")
@@ -315,6 +357,13 @@ try {
         `Boolean(document.querySelector('.answer-feedback.correct'))`,
         "answer accepted",
       );
+      if (m === 0 && step === mission.steps[0])
+        assert(
+          await evaluate(
+            `Boolean(document.querySelector('.reading-context .evidence-line'))`,
+          ),
+          "reading evidence highlighted",
+        );
       await click(".exercise-bottom > .primary-button");
     }
     await until(
@@ -343,10 +392,17 @@ try {
   }
   assert(
     await evaluate(
-      `document.querySelector('.xp-pill').innerText.includes('480')`,
+      `document.querySelector('.coin-pill').innerText.includes('480')`,
     ),
     "all task rewards preserved",
   );
+  assert(
+    await evaluate(
+      `document.querySelector('.completion-coins').innerText.includes('60')`,
+    ),
+    "actual awarded coins",
+  );
+  await screenshot("ui-coins-completion.png");
   await click('button[aria-label="单词卡"]');
   await until(
     `document.querySelectorAll('.word-card').length===26`,
@@ -494,6 +550,25 @@ try {
     ),
     "mobile map buttons visible",
   );
+  for (const width of [320, 390]) {
+    await send("Emulation.setDeviceMetricsOverride", {
+      width,
+      height: 844,
+      deviceScaleFactor: 1,
+      mobile: true,
+    });
+    await evaluate(
+      "new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(done)))",
+    );
+    assert(
+      await evaluate(`(()=>{
+        const view=document.querySelector('.town-stage').getBoundingClientRect();
+        const pins=[...document.querySelectorAll('.map-pin')].map(button=>button.getBoundingClientRect());
+        return pins.every((a,i)=>a.left>=view.left&&a.right<=view.right&&a.top>=view.top&&a.bottom<=view.bottom&&!pins.slice(i+1).some(b=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top));
+      })()`),
+      "narrow map labels stay visible and do not overlap at " + width,
+    );
+  }
   await tap('[data-chapter="school"]');
   await until(
     `Boolean(document.querySelector('.scene-school'))&&Boolean(document.querySelector('.scene-start-button'))`,
@@ -574,6 +649,10 @@ try {
           "locked scene preview",
           "natural blink",
           "all tasks",
+          "reading source evidence",
+          "progressive vocabulary clues",
+          "writing revision checklist",
+          "coin receipts and balance",
           "hover memory links",
           "flip",
           "review persistence",

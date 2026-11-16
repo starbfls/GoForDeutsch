@@ -8,6 +8,7 @@ import {
   Send,
 } from "lucide-react";
 import AnswerInput from "./AnswerInput";
+import WritingFeedback from "./WritingFeedback";
 export default function ExercisePanel({ game }) {
   const {
     run,
@@ -29,8 +30,13 @@ export default function ExercisePanel({ game }) {
         ? game.tiles.length > 0
         : Boolean(game.text.trim());
   return (
-    <section className="exercise-panel" data-step={step.id}>
+    <section
+      className="exercise-panel"
+      data-step={step.id}
+      data-mode={step.mode}
+    >
       <h2>{step.prompt}</h2>
+      {step.speaker && <div className="task-speaker">{step.speaker}</div>}
       <div className="german-prompt">{step.german}</div>
       <AnswerInput game={game} step={step} />
       {feedback && (
@@ -48,6 +54,7 @@ export default function ExercisePanel({ game }) {
           </span>
         </div>
       )}
+      <WritingFeedback assessment={feedback?.assessment} />
       <div className="exercise-bottom">
         {pending ? (
           <button className="primary-button" onClick={advance}>
@@ -66,7 +73,11 @@ export default function ExercisePanel({ game }) {
             ) : (
               <Check size={17} />
             )}
-            检查答案
+            {step.mode === "vocabulary"
+              ? "猜一猜"
+              : step.mode === "writing"
+                ? "检查写作"
+                : "提交回答"}
             <ArrowRight size={17} />
           </button>
         )}
@@ -76,14 +87,14 @@ export default function ExercisePanel({ game }) {
             disabled={busy || Boolean(pending)}
           >
             <Lightbulb size={15} />
-            提示
+            {step.mode === "vocabulary" ? "再给一条线索" : "提示"}
           </button>
           <button
             onClick={() => turn("example")}
             disabled={busy || Boolean(pending)}
           >
             <BookOpen size={15} />
-            例句
+            {step.mode === "vocabulary" ? "查看例词" : "例句"}
           </button>
           <button
             onClick={() => setAskOpen(!askOpen)}

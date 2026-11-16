@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CircleHelp, Lightbulb, MessageCircle } from "lucide-react";
 import Mia from "@/components/Mia";
+import TaskContext from "./TaskContext";
 import { sceneGuide } from "@/features/companion/dialogue";
 import "@/features/companion/companion.css";
 export default function SceneStage({ game, children }) {
@@ -9,13 +10,14 @@ export default function SceneStage({ game, children }) {
   const message = !run && talk ? sceneGuide(scene.id).observe : speech;
   return (
     <section
-      className={`lesson-scene scene-${scene.id}`}
+      className={`lesson-scene scene-${scene.id} ${run?.step?.mode ? "has-task-context" : ""}`}
       aria-label={`${scene.location}场景`}
     >
       <div
         className="scene-art"
         style={{ backgroundImage: `url('${scene.image}')` }}
       />
+      {run?.step && <TaskContext step={run.step} feedback={game.feedback} />}
       <div className="lesson-mia">
         <button
           className="scene-companion-button"

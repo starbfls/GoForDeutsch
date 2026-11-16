@@ -7,6 +7,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app.config import DATA_DIR
+from app.curriculum import mission_by_id
+from app.curriculum import CURRENT_VERSION
+from app.repositories.learning_schema import initialize
+from app.repositories.records import append_turn, touch_position
+from app.repositories.wallet import credit_mission
 
 
 class LearningStore:
@@ -14,33 +19,41 @@ class LearningStore:
         self.path = str(path or Path(DATA_DIR) / "learning.sqlite3")
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
-            db.executescript("""
-                CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, learner TEXT NOT NULL, mission TEXT NOT NULL, state TEXT NOT NULL);
-                CREATE TABLE IF NOT EXISTS results (learner TEXT, mission TEXT, state TEXT NOT NULL, PRIMARY KEY(learner, mission));
-                CREATE TABLE IF NOT EXISTS api_budget (day TEXT PRIMARY KEY, calls INTEGER NOT NULL);
-            """)
+            self.migration_backup = initialize(db, self.path)
 
     @contextmanager
     def connection(self):
         db = sqlite3.connect(self.path, timeout=10)
         try:
             db.row_factory = sqlite3.Row
+            db.execute("PRAGMA foreign_keys=ON")
             with db:
                 yield db
         finally:
             db.close()
 
     def start(self, learner, mission_id):
+        now = datetime.now(timezone.utc).isoformat()
+        mission = mission_by_id(mission_id)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             rows = db.execute("SELECT id,state FROM runs WHERE learner=? AND mission=? ORDER BY rowid DESC", (learner, mission_id)).fetchall()
             for row in rows:
                 state = json.loads(row["state"])
                 if not state["completed"]:
+                    if state.get("curriculum_version",1) < CURRENT_VERSION:
+                        state = {"index":0,"completed":False,"attempts":{},"hints":{},"evidence":[],
+                                 "revision":state["revision"]+1,"curriculum_version":CURRENT_VERSION}
+                        db.execute("UPDATE runs SET state=? WHERE id=?", (json.dumps(state),row["id"]))
+                    db.execute("UPDATE runs SET updated_at=? WHERE id=?", (now, row["id"]))
+                    if mission:
+                        touch_position(db, learner, mission, row["id"], state, now)
                     return row["id"], state
             run_id = str(uuid.uuid4())
-            state = {"index": 0, "completed": False, "attempts": {}, "hints": {}, "evidence": [], "revision": 0}
-            db.execute("INSERT INTO runs VALUES (?,?,?,?)", (run_id, learner, mission_id, json.dumps(state)))
+            state = {"index": 0, "completed": False, "attempts": {}, "hints": {}, "evidence": [], "revision": 0, "curriculum_version":CURRENT_VERSION}
+            db.execute("INSERT INTO runs(id,learner,mission,state,created_at,updated_at) VALUES (?,?,?,?,?,?)", (run_id, learner, mission_id, json.dumps(state), now, now))
+            if mission:
+                touch_position(db, learner, mission, run_id, state, now)
             return run_id, state
 
     def get(self, run_id, learner):
@@ -48,17 +61,24 @@ class LearningStore:
             row = db.execute("SELECT mission,state FROM runs WHERE id=? AND learner=?", (run_id, learner)).fetchone()
             return (row["mission"], json.loads(row["state"])) if row else None
 
-    def save(self, run_id, learner, mission_id, state, old_revision):
+    def save(self, run_id, learner, mission_id, state, old_revision, event=None):
+        now = datetime.now(timezone.utc).isoformat()
+        mission = mission_by_id(mission_id)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
-            row = db.execute("SELECT state FROM runs WHERE id=? AND learner=?", (run_id, learner)).fetchone()
-            if not row or json.loads(row[0])["revision"] != old_revision:
+            row = db.execute("SELECT mission,state FROM runs WHERE id=? AND learner=?", (run_id, learner)).fetchone()
+            if not row or row["mission"] != mission_id or json.loads(row["state"])["revision"] != old_revision:
                 return False
             state["revision"] = old_revision + 1
-            db.execute("UPDATE runs SET state=? WHERE id=?", (json.dumps(state, ensure_ascii=False), run_id))
+            if state["completed"] and mission:
+                state["reward_coins"] = credit_mission(db, learner, mission_id, mission.get("reward_coins",mission["xp"]), run_id, now)
+            db.execute("UPDATE runs SET state=?,updated_at=? WHERE id=?", (json.dumps(state, ensure_ascii=False), now, run_id))
+            if mission:
+                touch_position(db, learner, mission, run_id, state, now)
+                if event is not None:
+                    append_turn(db, learner, run_id, state["revision"], mission, event, now)
             if state["completed"]:
-                # Replays cannot farm XP. Keep latest evidence, but reward just once.
-                db.execute("INSERT INTO results VALUES (?,?,?) ON CONFLICT(learner,mission) DO UPDATE SET state=excluded.state", (learner, mission_id, json.dumps(state, ensure_ascii=False)))
+                db.execute("INSERT INTO results(learner,mission,state) VALUES (?,?,?) ON CONFLICT(learner,mission) DO UPDATE SET state=excluded.state", (learner, mission_id, json.dumps(state, ensure_ascii=False)))
             return True
 
     def results(self, learner):

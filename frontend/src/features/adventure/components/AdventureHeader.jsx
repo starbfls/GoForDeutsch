@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LogOut, Settings2, Star } from "lucide-react";
+import { LogOut, Settings2, Coins } from "lucide-react";
 export default function AdventureHeader({ game, user, logout }) {
   const labels = {
     town: "学习地图",
@@ -12,9 +12,9 @@ export default function AdventureHeader({ game, user, logout }) {
     <header className="adventure-topbar">
       <span className="current-section">{labels[game.page]}</span>
       <div className="topbar-right">
-        <span className="xp-pill">
-          <Star size={17} />
-          {game.progress.xp} XP
+        <span className="coin-pill" aria-label="金币余额">
+          <Coins size={19} />
+          {game.progress.coins ?? game.progress.xp} 金币
         </span>
         <button
           className="settings-icon"

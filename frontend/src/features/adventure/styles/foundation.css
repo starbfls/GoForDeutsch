@@ -200,7 +200,7 @@
   align-items: center;
   gap: 25px;
 }
-.xp-pill {
+.coin-pill {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -301,18 +301,10 @@
   position: absolute;
   inset: 0;
   background-repeat: no-repeat;
-  background-image: url("/assets/mia-expressions.png");
-  background-size: 300% 200%;
   animation: expression-in 0.16s ease-out;
 }
-.mia-idle {
-  background-image: url("/assets/mia-idle.png");
-  background-size: 200% 100%;
+.mia-sprite.is-idle {
   animation: none;
-}
-.mia-extra-v3 {
-  background-image: url("/assets/mia-expressions-v3.png");
-  background-size: 300% 200%;
 }
 @keyframes spin {
   to {

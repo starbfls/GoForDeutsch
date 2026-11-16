@@ -1,5 +1,6 @@
 export const EMPTY_PROGRESS = {
   completed: [],
+  coins: 0,
   xp: 0,
   evidence: [],
   recommended: "bakery-first",
