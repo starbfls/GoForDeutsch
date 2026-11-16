@@ -51,6 +51,7 @@ export default function FlashcardsView({ game }) {
             deck={deck}
             chapters={game.data?.chapters || []}
             onActive={setActive}
+            onLearn={() => game.navigate("town")}
           />
         )}
       </div>

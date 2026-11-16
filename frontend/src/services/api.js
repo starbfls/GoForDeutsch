@@ -20,7 +20,8 @@ api.interceptors.request.use((config) => {
 
 export const authApi = {
   register: (password) => api.post("/auth/register", { password }),
-  login: (username, password) => api.post("/auth/login", { username, password }),
+  login: (username, password) =>
+    api.post("/auth/login", { username, password }),
   me: () => api.get("/auth/me"),
 };
 
@@ -32,8 +33,17 @@ export const learningApi = {
 
 export const flashcardApi = {
   library: () => api.get("/flashcards"),
-  review: (card_id, rating, review_id) => api.post("/flashcards/review", { card_id, rating, review_id }),
-  favorite: (card_id, favorite) => api.post("/flashcards/favorite", { card_id, favorite }),
+  collect: (card_ids) => api.post("/flashcards/collect", { card_ids }),
+  review: (card_id, rating, review_id) =>
+    api.post("/flashcards/review", { card_id, rating, review_id }),
+  favorite: (card_id, favorite) =>
+    api.post("/flashcards/favorite", { card_id, favorite }),
+};
+
+export const wardrobeApi = {
+  get: () => api.get("/wardrobe"),
+  equip: (outfit_id) => api.post("/wardrobe/equip", { outfit_id }),
+  purchase: (outfit_id) => api.post("/wardrobe/purchase", { outfit_id }),
 };
 
 export default api;

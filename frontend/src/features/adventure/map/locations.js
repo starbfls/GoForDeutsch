@@ -1,5 +1,8 @@
 // Coordinates refer to the complete bright panorama, not a cropped source image.
 export const MAP_LOCATIONS = {
+  clothing: { x: 0.395, y: 0.83, compact: { x: 0.38, y: 0.77 }, focus: { x: 0.32, y: 0.68 } },
+  electronics: { x: 0.64, y: 0.83, compact: { x: 0.62, y: 0.77 }, focus: { x: 0.73, y: 0.68 } },
+  restaurant: { x: 0.59, y: 0.45, compact: { x: 0.575, y: 0.39 }, focus: { x: 0.62, y: 0.32 } },
   bakery: {
     x: 0.43,
     y: 0.84,

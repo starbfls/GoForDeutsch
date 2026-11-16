@@ -20,6 +20,8 @@ class ReviewTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parent)
         self.store=LearningStore(Path(self.temp.name)/'reviews.sqlite3')
         self.repository=FlashcardRepository(self.store)
+        for owner in ["guest:a","guest:b"]:
+            self.repository.collect(owner,[card["id"] for card in VOCABULARY])
         self.now=datetime(2026,11,10,12,tzinfo=timezone.utc)
 
     def tearDown(self):
@@ -94,10 +96,10 @@ class ReviewTests(unittest.TestCase):
         for word in VOCABULARY:
             self.assertTrue(word['mnemonic'])
             self.assertTrue(word['example_zh'])
-            self.assertEqual(word['unit_id'],'kennenlernen')
+            self.assertEqual(word['unit_id'],next(scene['unit_id'] for scene in CHAPTERS if scene['id']==word['chapter_id']))
 
     def test_all_catalog_identifiers_are_unique_and_prerequisites_ordered(self):
-        self.assertEqual(len(CHAPTERS),3)
+        self.assertEqual(len(CHAPTERS),6)
         self.assertEqual(len({m['id'] for m in MISSIONS}),len(MISSIONS))
         self.assertEqual(len({w['id'] for w in VOCABULARY}),len(VOCABULARY))
         for index,mission in enumerate(MISSIONS):

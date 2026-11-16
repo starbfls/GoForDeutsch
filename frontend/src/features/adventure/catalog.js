@@ -11,10 +11,9 @@ export const friendlyError = (error) =>
     ? error.response.data.detail
     : "暂时没有连接到学习服务。请确认启动窗口仍在运行，再重新连接。";
 export const unlocked = (mission, progress) =>
-  progress.available?.includes(mission.id) ||
-  progress.completed.includes(mission.id) ||
-  !mission.requires ||
-  progress.completed.includes(mission.requires);
+  Array.isArray(progress.available)
+    ? progress.available.includes(mission.id)
+    : progress.completed.includes(mission.id) || !mission.requires || progress.completed.includes(mission.requires);
 export const chapterMissions = (missions, chapterId) =>
   missions.filter((mission) => mission.chapter_id === chapterId);
 export const nextInChapter = (missions, progress, chapterId) =>

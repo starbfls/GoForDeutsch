@@ -30,7 +30,8 @@ export default function useFlashcards(notify) {
   }, [load]);
   const filtered = cards.filter(
     (card) =>
-      (chapter === "all" || card.chapter_id === chapter) &&
+      (chapter === "all" ||
+        (card.chapter_ids || [card.chapter_id]).includes(chapter)) &&
       (scope === "all" ||
         (scope === "due" && card.due) ||
         (scope === "saved" && card.review.favorite)),

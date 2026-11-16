@@ -9,6 +9,11 @@ export const MIA_APPEARANCE = {
   offsets: { blink: [4.57, 0] },
 };
 
+export const OUTFIT_APPEARANCES = {
+  "school-uniform": MIA_APPEARANCE,
+  "pink-gingham": { id: "pink-gingham", image: "/assets/characters/mia/pink-gingham.png", columns: 4, rows: 3, zoom: 1, offsets: { blink: [0, 0] } },
+  "blue-gingham": { id: "blue-gingham", image: "/assets/characters/mia/blue-gingham.png", columns: 4, rows: 3, zoom: 1, offsets: { blink: [0, 0] } },
+};
 export const MIA_EXPRESSIONS = {
   smile: { cell: [0, 0], label: "Mia 微笑" },
   blink: { cell: [1, 0], label: "Mia 闭眼眨眼" },
@@ -24,13 +29,14 @@ export const MIA_EXPRESSIONS = {
   focus: { cell: [3, 2], label: "Mia 友好专注" },
 };
 
-export function miaSpriteStyle(name) {
+export function miaSpriteStyle(name, outfit = "school-uniform") {
+  const appearance = OUTFIT_APPEARANCES[outfit] || MIA_APPEARANCE;
   const [x, y] = MIA_EXPRESSIONS[name].cell;
-  const [offsetX, offsetY] = MIA_APPEARANCE.offsets[name] || [0, 0];
+  const [offsetX, offsetY] = appearance.offsets[name] || [0, 0];
   return {
-    transform: `scale(${MIA_APPEARANCE.zoom}) translate(${offsetX}%, ${offsetY}%)`,
-    backgroundImage: `url("${MIA_APPEARANCE.image}")`,
-    backgroundSize: `${MIA_APPEARANCE.columns * 100}% ${MIA_APPEARANCE.rows * 100}%`,
+    transform: `scale(${appearance.zoom}) translate(${offsetX}%, ${offsetY}%)`,
+    backgroundImage: `url("${appearance.image}")`,
+    backgroundSize: `${appearance.columns * 100}% ${appearance.rows * 100}%`,
     backgroundPosition: `${(x / (MIA_APPEARANCE.columns - 1)) * 100}% ${(y / (MIA_APPEARANCE.rows - 1)) * 100}%`,
   };
 }

@@ -17,7 +17,7 @@
 
 ## Mia：一套服装、一张图集
 
-唯一运行时角色图片：
+默认服装角色图片：
 
 `frontend/public/assets/characters/mia/school-uniform.png`
 
@@ -39,7 +39,7 @@ focus 已替换原来半闭眼、托脸的状态，改为睁眼、眉毛舒展�
 
 整合及两次修订使用内置图片工具完成；原始提示词、眨眼修订与最终间距修订见 [asset-prompts-mia-unified.json](asset-prompts-mia-unified.json)。预览：artifacts/mia-expressions-review.png。
 
-以后每套服装可沿用同样的表情名称与格子顺序。商店、购买、换装和新伙伴尚未实现，本次只整理现有 Mia。
+每套服装沿用同样的表情名称与格子顺序。商店与背包现已接入，仍由 Mia 一人陪伴学习。
 
 ## 已清理的旧素材
 
@@ -50,3 +50,21 @@ focus 已替换原来半闭眼、托脸的状态，改为睁眼、眉毛舒展�
 这些旧文件合计 24,554,766 字节；运行代码和浏览器检查脚本已改用当前五个素材文件。重新构建会同时清除 dist 中的旧副本。
 
 选中的生成结果已从工具的 C 盘输出目录移入 D 盘；本轮草稿、缓存和测试环境在验证后清理。用户原始参考图片保持原位。
+
+
+## Einkaufen：商场、场景与便服
+
+使用内置 image_gen，参考用户的现代商场与粉格便服图片；未使用用户的教学 API Key。四张配套插画采用清晰线条、明亮穹顶采光和同一建筑布局，商店以服装、耳机、餐具图形识别，无真实商标。餐厅草稿中的空白板已通过内置工具移除。
+
+| 路径（frontend/public/assets/ 下） | 尺寸 | 用途 |
+| --- | --- | --- |
+| mall-unit2.png | 2172 × 724 | 蓝色主题现代商场全景 |
+| clothing-unit2.png | 1536 × 1024 | 服装店与粉格便服展示 |
+| electronics-unit2.png | 1536 × 1024 | 手机、电脑与配件商店 |
+| restaurant-unit2.png | 1536 × 1024 | 同一商场楼上餐厅 |
+| characters/mia/pink-gingham.png | 1182 × 1330 | 服装店通关奖励，12 帧透明表情图集 |
+| characters/mia/blue-gingham.png | 1182 × 1330 | 商店蓝格便服，12 帧透明表情图集 |
+
+miaAppearance.js 的 OUTFIT_APPEARANCES 分别指定图集、显示比例和闭眼对齐参数；MIA_EXPRESSIONS 的名称与顺序共用。地图、场景和词卡中的 Mia 读取账号当前穿着；背包预览通过 outfit 属性指定服装并使用 smile。
+
+完整初始及修订提示词：[asset-prompts-unit2.json](asset-prompts-unit2.json)。浏览器表情预览：artifacts/mia-pink-gingham-expressions.png、artifacts/mia-blue-gingham-expressions.png。

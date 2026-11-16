@@ -70,8 +70,8 @@ export default function SettingsDialog({ game, user }) {
         <div className="settings-info">
           <strong>
             {data?.ai.enabled
-              ? `AI 教学已启用 · ${data.ai.model}`
-              : "当前使用预设教学提示"}
+              ? `AI 教学已启用 · ${data.ai.provider === "deepseek" ? "DeepSeek" : "OpenAI"} · ${data.ai.model}`
+              : "本地教学（未连接 AI）"}
           </strong>
         </div>
         {!user && (

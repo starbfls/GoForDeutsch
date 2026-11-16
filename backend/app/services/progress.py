@@ -1,6 +1,7 @@
 """Course-aware study summaries, backed by saved runs, position and coin wallet."""
 from app.curriculum import CHAPTERS, MISSIONS, UNITS, mission_by_id
 from app.repositories.records import LearningRecordRepository
+from app.curriculum.prerequisites import available as is_available
 
 
 def progress_data(store, who):
@@ -13,7 +14,7 @@ def progress_data(store, who):
     recommended = next((mission["id"] for mission in MISSIONS if mission["id"] not in results), None)
     if recommended is None:
         recommended = min(MISSIONS, key=lambda mission: sum(item["independent"] for item in results[mission["id"]]["evidence"]) / max(1, len(results[mission["id"]]["evidence"])))["id"]
-    available = [mission["id"] for mission in MISSIONS if not mission["requires"] or mission["requires"] in results or mission["id"] in results or mission["id"] in active]
+    available = [mission["id"] for mission in MISSIONS if is_available(mission, results, active)]
     statuses = []
     for mission in MISSIONS:
         run = runs.get(mission["id"])

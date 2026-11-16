@@ -93,8 +93,9 @@ class LearningFlowTests(unittest.TestCase):
             self.move(run, "answer", MISSIONS[0]["steps"][0]["example"])
         self.assertEqual(caught.exception.status_code, 409)
 
-    def test_all_three_missions_complete(self):
+    def test_all_curriculum_missions_complete(self):
         for mission in MISSIONS:
+            learning._requests.clear()
             result = self.finish(self.begin(mission["id"]))
         self.assertEqual(result["progress"]["xp"], sum(m["xp"] for m in MISSIONS))
         self.assertEqual(len(result["progress"]["completed"]), len(MISSIONS))
@@ -108,7 +109,7 @@ class LearningFlowTests(unittest.TestCase):
     def test_budget_exhaustion_falls_back_without_network(self):
         step = MISSIONS[0]["steps"][0]
         _, state = self.store.start(self.who, "bakery-first")
-        with patch.object(tutor, "AI_ENABLED", True), patch.object(tutor, "OPENAI_API_KEY", "test-only"), patch.object(tutor, "AI_DAILY_LIMIT", 0), patch.object(tutor.urllib.request, "urlopen") as request:
+        with patch.object(tutor, "AI_ENABLED", True), patch.object(tutor, "AI_PROVIDER", "openai"), patch.object(tutor, "OPENAI_API_KEY", "test-only"), patch.object(tutor, "AI_DAILY_LIMIT", 0), patch.object(tutor.urllib.request, "urlopen") as request:
             reply = tutor.respond(step, state, "hint")
         request.assert_not_called()
         self.assertEqual(reply["source"], "local")
@@ -120,7 +121,7 @@ class LearningFlowTests(unittest.TestCase):
         from unittest.mock import MagicMock
         response = MagicMock()
         response.__enter__.return_value.read.return_value = b'{"output":[{"content":[{"type":"output_text","text":"{\\\"message\\\":\\\"hello\\\",\\\"expression\\\":\\\"invalid\\\",\\\"strategy\\\":\\\"award_xp\\\"}"}]}]}'
-        with patch.object(tutor, "AI_ENABLED", True), patch.object(tutor, "OPENAI_API_KEY", "test-only"), patch.object(tutor.urllib.request, "urlopen", return_value=response):
+        with patch.object(tutor, "AI_ENABLED", True), patch.object(tutor, "AI_PROVIDER", "openai"), patch.object(tutor, "OPENAI_API_KEY", "test-only"), patch.object(tutor.urllib.request, "urlopen", return_value=response):
             reply = tutor.respond(step, state, "hint")
         self.assertEqual(reply["source"], "local")
         self.assertEqual(state["index"], 0)

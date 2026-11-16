@@ -1,0 +1,35 @@
+/* Unit accents share geometry, typography and success feedback. */
+.adventure-app[data-theme="blue"] {--ink:#20374c;--muted:#536a7c;--green:#3566a1;--line:#d6e0eb;--paper:#f4f7fb}
+[data-theme="blue"] .adventure-sidebar {background:#edf2f9}
+[data-theme="blue"] .adventure-topbar {background:#fafcff}
+[data-theme="blue"] .nav-item {color:#3d5975}
+[data-theme="blue"] .nav-item.active {background:#dbe7f6;color:#254f85}
+[data-theme="blue"] .nav-item:hover {background:#e0eaf6}
+[data-theme="blue"] .primary-button:hover:not(:disabled) {background:#274e81}
+[data-theme="blue"] .tiny-progress {background:#d4e1ef}
+[data-theme="blue"] .tiny-progress i {background:#4d7fb8}
+[data-theme="blue"] :is(.profile-button,.settings-icon,.current-section,.text-button) {color:#365b83}
+[data-theme="blue"] :is(.scene-start-panel,.dialogue-box,.scene-task-picker,.exercise-panel,.record-section) {border-color:#d6e0eb}
+[data-theme="blue"] :is(.german-prompt,.task-context,.reading-passage,.writing-brief) {background:#eef4fb;border-color:#cdddee}
+[data-theme="blue"] .companion-next {background:#3566a1}
+[data-theme="blue"] .companion-topics button {background:#edf3fb;color:#294f7b;border-color:#cbd9e9}
+[data-theme="blue"] :where(button,a,select,summary):focus-visible {outline-color:#719dd0}
+.map-pin[data-chapter="clothing"] {--pin-accent:#aa4d7c;--pin-tint:#fbe5ef}
+.map-pin[data-chapter="electronics"] {--pin-accent:#356ab0;--pin-tint:#e7f0ff}
+.map-pin[data-chapter="restaurant"] {--pin-accent:#ad6b31;--pin-tint:#fff0d9}
+.adventure-sidebar .nav-short {display:none}
+@media (max-width:650px) {
+  .adventure-sidebar nav {grid-template-columns:repeat(6,minmax(0,1fr));gap:1px}
+  .adventure-sidebar {padding-inline:5px}
+  .adventure-sidebar .nav-label {display:none}
+  .adventure-sidebar .nav-short {display:block}
+  [data-theme="blue"] .adventure-sidebar {background:#edf3fbf5;border-top-color:#d2deed}
+}
+
+[data-theme="blue"] .exercise-bottom > .primary-button.answer-continue {background:#16864b;border-color:#147a43}
+[data-theme="blue"] .exercise-bottom > .primary-button.answer-continue:hover:not(:disabled) {background:#0f743e}
+[data-theme="blue"] :is(.task-context,.german-prompt,.dialogue-box > p,.lesson-toolbar,.exercise-panel label,.scene-task-picker summary) {color:#29465f}
+[data-theme="blue"] :is(.task-speaker,.answer-word-count,.line-number,.umlaut-keys) {color:#506b87}
+[data-theme="blue"] .exercise-panel textarea {border-color:#bdcee1;background:#fafcff;color:#20374c}
+[data-theme="blue"] .exercise-panel textarea:focus {outline-color:#6a99cc;border-color:#5a87bc}
+[data-theme="blue"] .dialogue-box > strong {color:#3566a1}

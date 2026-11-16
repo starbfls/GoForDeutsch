@@ -27,3 +27,6 @@ MEMORY = {
  "park-destination":("想象一支箭头指向公园：有“去”的方向，用 in den Park。","我们去公园。"),
  "park-location":("想象人已经站在公园里面：没有去向，用 im Park 表示地点。","我们在公园里玩。"),
 }
+
+MEMORY["school-age"] = ("vierzehn：把 vier（四）和 zehn（十）连起来，记住十四。", "我十四岁。")
+MEMORY["school-football"] = ("Fuß 是脚，Ball 是球：用脚踢的球就是足球。", "我喜欢踢足球。")

@@ -1,5 +1,15 @@
 import WordCard from "./WordCard";
-export default function CardLibrary({ deck, chapters, onActive }) {
+export default function CardLibrary({ deck, chapters, onActive, onLearn }) {
+  if (!deck.cards.length)
+    return (
+      <div className="empty-state">
+        <h2>还没有单词卡</h2>
+        <p>猜对单词或完成练习后，选择加入你想复习的词。</p>
+        <button className="primary-button" onClick={onLearn}>
+          去学习
+        </button>
+      </div>
+    );
   return (
     <>
       <div className="card-filters">

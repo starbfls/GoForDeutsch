@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import AnswerInput from "./AnswerInput";
 import WritingFeedback from "./WritingFeedback";
+import WordCollection from "@/features/flashcards/WordCollection";
 export default function ExercisePanel({ game }) {
   const {
     run,
@@ -34,6 +35,7 @@ export default function ExercisePanel({ game }) {
       className="exercise-panel"
       data-step={step.id}
       data-mode={step.mode}
+      data-state={pending ? "passed" : "answering"}
     >
       <h2>{step.prompt}</h2>
       {step.speaker && <div className="task-speaker">{step.speaker}</div>}
@@ -47,7 +49,7 @@ export default function ExercisePanel({ game }) {
           {feedback.correct ? <Check size={16} /> : <Lightbulb size={16} />}
           <span>
             {feedback.correct
-              ? "正确"
+              ? "回答正确"
               : feedback.action === "answer"
                 ? "再试一次"
                 : "提示见左侧"}
@@ -55,11 +57,19 @@ export default function ExercisePanel({ game }) {
         </div>
       )}
       <WritingFeedback assessment={feedback?.assessment} />
+      {pending?.collection_offer?.length > 0 && (
+        <WordCollection
+          key={run.run_id + step.id}
+          cards={pending.collection_offer}
+          compact
+          onCollected={game.markCollected}
+          notify={game.setToast}
+        />
+      )}
       <div className="exercise-bottom">
         {pending ? (
-          <button className="primary-button" onClick={advance}>
-            {" "}
-            {pending.completed ? "完成" : "继续"}
+          <button className="primary-button answer-continue" onClick={advance}>
+            <Check size={21} /> {pending.completed ? "完成" : "继续"}
             <ArrowRight size={17} />
           </button>
         ) : (

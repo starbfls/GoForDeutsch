@@ -54,7 +54,7 @@ class LearningRecordTests(unittest.TestCase):
         progress = progress_data(self.store, self.who)
         self.assertIsNone(progress["current"])
         self.assertEqual(progress["xp"], 0)
-        self.assertEqual(len(progress["mission_statuses"]), 9)
+        self.assertEqual(len(progress["mission_statuses"]), len(MISSIONS))
         self.assertTrue(all(item["status"] == "not_started" for item in progress["mission_statuses"]))
         self.assertTrue(all(item["status"] == "not_started" for item in progress["chapters"]))
 

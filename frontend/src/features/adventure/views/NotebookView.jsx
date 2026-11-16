@@ -1,9 +1,9 @@
 import { Check } from "lucide-react";
 export default function NotebookView({ game }) {
-  const missions = game.data?.missions || [];
+  const missions = game.unitMissions;
   return (
     <div className="record-list">
-      {game.data?.chapters.map((scene) => (
+      {game.unitScenes.map((scene) => (
         <section className="record-section" key={scene.id}>
           <h2>{scene.location}</h2>
           {missions

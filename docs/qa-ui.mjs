@@ -103,6 +103,9 @@ const lessons = JSON.parse(
   ),
 );
 
+const expectedCardCount = new Set(
+  lessons.flatMap((mission) => mission.card_ids),
+).size;
 try {
   await send("Page.enable");
   await send("Runtime.enable");
@@ -129,6 +132,18 @@ try {
     `document.querySelector('.town-stage')&&document.querySelectorAll('.map-pin').length===3`,
     "fresh map",
   );
+  await click('button[aria-label="单词卡"]');
+  await until(
+    `document.querySelector('.empty-state')?.innerText.includes('还没有单词卡')`,
+    "initial library is empty",
+  );
+  assert(
+    await evaluate(`document.querySelectorAll('.word-card').length===0`),
+    "no automatic cards",
+  );
+  await screenshot("ui-cards-empty.png");
+  await click(".empty-state .primary-button");
+  await until(`Boolean(document.querySelector('.town-stage'))`, "back to map");
   assert(
     await evaluate(`document.querySelector('h1').innerText==='Kennenlernen'`),
     "unit title",
@@ -352,11 +367,35 @@ try {
         `!document.querySelector('.exercise-bottom > .primary-button').disabled`,
         "answer ready",
       );
+      const submitColor = await evaluate(
+        `getComputedStyle(document.querySelector('.exercise-bottom > .primary-button')).backgroundColor`,
+      );
       await click(".exercise-bottom > .primary-button");
       await until(
         `Boolean(document.querySelector('.answer-feedback.correct'))`,
         "answer accepted",
       );
+      await until(
+        `document.querySelector('.exercise-panel').dataset.state==='passed'&&Boolean(document.querySelector('.answer-continue'))&&getComputedStyle(document.querySelector('.answer-continue')).backgroundColor!==${JSON.stringify(submitColor)}`,
+        "correct answer turns Continue green",
+      );
+      if (step.card_id) {
+        assert(
+          await evaluate(
+            `document.querySelector('.word-collection-inline')?.dataset.cardId===${JSON.stringify(step.card_id)}`,
+          ),
+          "correct word can be collected",
+        );
+        await click(".collect-word-button");
+        await until(
+          `document.querySelector('.collect-word-button')?.innerText.includes('已加入')`,
+          "manual word collection",
+        );
+        if (m === 3 && step === mission.steps[0])
+          await screenshot("ui-word-collected.png");
+      }
+      if (m === 0 && step === mission.steps[0])
+        await screenshot("ui-answer-correct.png");
       if (m === 0 && step === mission.steps[0])
         assert(
           await evaluate(
@@ -370,6 +409,33 @@ try {
       `Boolean(document.querySelector('.completion'))`,
       "task complete",
     );
+    if (m === 0) {
+      assert(
+        await evaluate(
+          `[...document.querySelectorAll('.collection-choices input')].every(input=>!input.checked)`,
+        ),
+        "completion does not preselect cards",
+      );
+      await screenshot("ui-choose-flashcards.png");
+      await click(".collection-choices input");
+      await click(".collect-selected-button");
+      await until(
+        `document.querySelectorAll('.collection-choices .is-collected').length===1`,
+        "only chosen card saved",
+      );
+    }
+    if (
+      await evaluate(
+        `Boolean(document.querySelector('.word-collection [data-select-all]'))`,
+      )
+    ) {
+      await click(".word-collection [data-select-all]");
+      await click(".collect-selected-button");
+      await until(
+        `!document.querySelector('.word-collection [data-select-all]')`,
+        "selected words saved",
+      );
+    }
     if (m < lessons.length - 1) {
       await click(".completion-actions .primary-button");
       if (lessons[m + 1].chapter !== mission.chapter) {
@@ -405,7 +471,7 @@ try {
   await screenshot("ui-coins-completion.png");
   await click('button[aria-label="单词卡"]');
   await until(
-    `document.querySelectorAll('.word-card').length===26`,
+    `document.querySelectorAll('.word-card').length===${expectedCardCount}`,
     "word library",
   );
   assert(
@@ -505,14 +571,14 @@ try {
   );
   await click(".review-topline .text-button");
   await until(
-    `document.querySelectorAll('.word-card').length===25`,
+    `document.querySelectorAll('.word-card').length===${expectedCardCount - 1}`,
     "review saved",
   );
   await send("Page.reload");
   await until(`Boolean(document.querySelector('.town-stage'))`, "reload");
   await click('button[aria-label="单词卡"]');
   await until(
-    `document.querySelectorAll('.word-card').length===25`,
+    `document.querySelectorAll('.word-card').length===${expectedCardCount - 1}`,
     "review survives reload",
   );
   await click('[data-scope="saved"]');
@@ -634,7 +700,7 @@ try {
         passed: true,
         lessons: 9,
         steps: 27,
-        cards: 26,
+        cards: expectedCardCount,
         checks: [
           "readable typography",
           "no adventure slogans",
@@ -649,6 +715,9 @@ try {
           "locked scene preview",
           "natural blink",
           "all tasks",
+          "initially empty personal cards",
+          "explicit collection after correct guesses and completion",
+          "green Continue after correct answers",
           "reading source evidence",
           "progressive vocabulary clues",
           "writing revision checklist",

@@ -7,6 +7,10 @@ from app.curriculum import MISSIONS, assess_answer, mission_by_id, public_step
 from app.tutor import respond
 from app.curriculum import CURRENT_VERSION
 from app.services.progress import progress_data
+from app.ai.reading import evaluate_reading
+from app.services.card_collection import candidates
+from app.curriculum.card_links import GUESS_CARDS
+from app.curriculum.prerequisites import available
 
 _locks = [Lock() for _ in range(64)]
 _requests = defaultdict(list)
@@ -20,8 +24,7 @@ def start_run(store, mission_id, who):
     mission = mission_by_id(mission_id)
     if not mission:
         raise HTTPException(404, "没有找到这个任务。")
-    index = MISSIONS.index(mission)
-    if index and MISSIONS[index - 1]["id"] not in store.results(who) and mission_id not in store.results(who) and mission_id not in store.active_missions(who):
+    if not available(mission, store.results(who), store.active_missions(who)):
         raise HTTPException(403, "先完成前一个任务，再来挑战吧。")
     run_id, state = store.start(who, mission["id"])
     return {**run_payload(run_id, mission, state), "progress": progress_data(store, who), "message": "欢迎回来，我们从上次的位置继续。" if state["index"] else mission["intro"]}
@@ -57,15 +60,17 @@ def submit_turn(store, body, who):
             raise HTTPException(422, "先写下你想问的问题吧。")
         correct = False
         assessment = None
+        judged_tutor = None
         if body.action == "answer":
             state["attempts"][sid] = state["attempts"].get(sid, 0) + 1
             if len(body.answer) > step.get("max_length",300):
                 raise HTTPException(422,"回答过长，请围绕当前问题简短作答。")
-            evaluation = assess_answer(step, body.answer)
+            evaluation = evaluate_reading(step, state, body.answer, store) if step.get("mode") == "reading" else assess_answer(step, body.answer)
+            judged_tutor = evaluation.get("tutor")
             correct, assessment = evaluation["correct"], evaluation["assessment"]
         elif body.action in {"hint", "example", "ask"}:
             state["hints"][sid] = state["hints"].get(sid, 0) + 1
-        tutor = respond(step, state, body.action, body.answer, body.question, correct, assessment)
+        tutor = judged_tutor or respond(step, state, body.action, body.answer, body.question, correct, assessment)
         if correct:
             independent = state["attempts"][sid] == 1 and not state["hints"].get(sid)
             state["evidence"].append({"step_id": sid, "skill": step["skill"], "independent": independent, "attempts": state["attempts"][sid], "hints": state["hints"].get(sid, 0)})
@@ -84,4 +89,10 @@ def submit_turn(store, body, who):
         }
         if not store.save(body.run_id, who, mission_id, state, body.revision, event=event):
             raise HTTPException(409, "任务状态已更新，请重新进入后继续。")
-        return {**run_payload(body.run_id, mission, state), "correct": correct, "assessment":assessment, "tutor": tutor, "progress": progress_data(store, who)}
+        offers = []
+        if correct and step.get("mode") == "vocabulary":
+            cid = GUESS_CARDS.get((mission_id, sid))
+            if cid:
+                offers = candidates(store, who, only_ids=[cid])
+        completed_cards = candidates(store, who, mission_id) if state["completed"] else []
+        return {"collection_offer":offers,"collection_candidates":completed_cards, **run_payload(body.run_id, mission, state), "correct": correct, "assessment":assessment, "tutor": tutor, "progress": progress_data(store, who)}

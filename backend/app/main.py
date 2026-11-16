@@ -8,6 +8,7 @@ from pathlib import Path
 from app.routers import auth as auth_router
 from app.routers import learning as learning_router
 from app.routers import flashcards as flashcard_router
+from app.routers import wardrobe as wardrobe_router
 
 app = FastAPI(
     title="GoForDeutsch API",
@@ -30,6 +31,8 @@ app.include_router(learning_router.router, prefix="/api")
 app.include_router(flashcard_router.router)
 app.include_router(flashcard_router.router, prefix="/api")
 
+app.include_router(wardrobe_router.router, prefix="/api")
+
 FRONTEND = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 if (FRONTEND / "assets").is_dir():
     app.mount("/assets", StaticFiles(directory=FRONTEND / "assets"), name="assets")
@@ -49,7 +52,7 @@ def health():
 
 @app.get("/{path:path}", include_in_schema=False)
 def frontend_route(path: str):
-    if path.startswith(("api/", "auth/", "learning/", "flashcards/")):
+    if path.startswith(("api/", "auth/", "learning/", "flashcards/", "wardrobe/")):
         raise HTTPException(404, "Not found")
     if path == "favicon.svg" and (FRONTEND / "favicon.svg").is_file():
         return FileResponse(FRONTEND / "favicon.svg")

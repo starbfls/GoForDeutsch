@@ -12,6 +12,7 @@ from app.curriculum import CURRENT_VERSION
 from app.repositories.learning_schema import initialize
 from app.repositories.records import append_turn, touch_position
 from app.repositories.wallet import credit_mission
+from app.repositories.wardrobe import grant_reward
 
 
 class LearningStore:
@@ -79,6 +80,7 @@ class LearningStore:
                     append_turn(db, learner, run_id, state["revision"], mission, event, now)
             if state["completed"]:
                 db.execute("INSERT INTO results(learner,mission,state) VALUES (?,?,?) ON CONFLICT(learner,mission) DO UPDATE SET state=excluded.state", (learner, mission_id, json.dumps(state, ensure_ascii=False)))
+                grant_reward(db, learner, now)
             return True
 
     def results(self, learner):

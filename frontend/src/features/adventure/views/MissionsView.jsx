@@ -1,9 +1,9 @@
 import MissionCard from "../components/MissionCard";
 export default function MissionsView({ game }) {
-  const missions = game.data?.missions || [];
+  const missions = game.unitMissions;
   return (
     <div className="mission-sections">
-      {game.data?.chapters.map((scene) => (
+      {game.unitScenes.map((scene) => (
         <section key={scene.id} className="chapter-section">
           <div className="section-heading">
             <h2>

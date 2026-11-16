@@ -14,6 +14,8 @@ from app.repositories.wallet import WalletRepository
 from app.routers import learning
 from app.services.learning import run_payload
 
+MISSIONS = [mission for mission in MISSIONS if mission["unit_id"] == "kennenlernen"]
+
 class UnitOneTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parent)

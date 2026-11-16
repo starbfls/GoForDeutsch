@@ -20,7 +20,7 @@
 | 累计获得与消费 | wallets.total_earned / total_spent |
 | 收支明细 | wallet_transactions，记录金额、原因、来源 ID、交易后余额和时间 |
 
-“章节”在当前课程分为四层：单元（Kennenlernen）→ 场景（面包店、公园、学校）→ 练习（各三个）→ 答题步骤。接口同时给出稳定 ID 和可读编号。
+“章节”在当前课程分为四层：单元（Kennenlernen / Einkaufen）→ 场景（每单元三个）→ 练习（每场景三个）→ 答题步骤。接口同时给出稳定 ID 和可读编号。
 
 例如 current 会包含 unit_number=1、chapter_number=1、mission_number=2、step_number=2，表示第一单元、面包店、第二个练习、第二个步骤。step_index 为从 0 开始的内部下标；step_number 从 1 开始，完成后保持最后一个步骤的编号，completed 标记为 true。从未开始学习的账号 current 为 null。
 
@@ -28,13 +28,13 @@
 
 错误答案、后续重试和向 Mia 的提问不会覆盖早先记录。每次服务成功提交都会追加一条事件；重复/过期请求、越权请求和校验失败的请求不作为成功学习记录保存。请求提示本身会保存为动作，但不会把当时尚未提交的输入冒充成答案。
 
-## 金币作为未来商店货币
+## 金币与商店消费
 
 首次完成关卡时，后端在同一个 SQLite 事务里提交学习状态、作答历史、完成结果、钱包余额和奖励流水。关卡奖励数额来自服务器课程定义。任一环节失败，整个事务回滚。
 
 每个学生、每个练习的完成奖励只能记一次；重做仍保留作答记录，但不会反复获得金币。progress.coins 表示可用金币，earned_coins / spent_coins 表示累计获得 / 累计消费；wallet.currency 为 COIN。xp / earned_xp 与课程定义的 xp 字段暂作旧客户端兼容别名，数值不是另一份余额。以后消费不会被刷新或重新计算关卡奖励“补回”。run.reward_coins 为本轮实际新增奖励，重做为 0。
 
-WalletRepository.spend 是未来商店的内部接入点，提供余额检查、原子扣款、购买 ID 去重和流水记录。当前没有商店页面或对外扣款接口；后续应由服务器读取商品价格，再调用该方法，不能使用前端提供的价格。内部接口已验证重复扣款和并发余额不足情况。
+WalletRepository.spend 保留内部幂等扣款接口；商店通过 spend_in 复用同一个 SQLite 事务，原子提交服装归属与扣款。商品价格从后端 wardrobe_catalog.py 读取，HTTP 只接收 outfit_id，不接受客户端价格。重复购买不重复扣款，金币不足整体失败。
 
 ## 当前账号可读取的接口
 
@@ -72,3 +72,33 @@ backend/tests/test_learning_records.py 验证原文、正误、历史分页、�
 三种玩法只使用当前新版题目，没有保留旧题分支。已完成状态、已领取金币与历史原文保持。旧的未完成 runs 在再次 start 时清空该轮步骤、尝试、提示和证据，从新版第一题开始，沿用 run_id 并递增 revision。没有课程版本或版本低于 2 的旧页面直接提交会收到 409，要求重新进入；重置前提交的学习历史不删除。已完成旧练习可以重做新题，但首次奖励不会再次发放。
 
 新版反馈也保存在 learning_events.feedback：阅读包含证据行，猜词包含答对词条，段落写作包含信息清单、句数、词数和修改建议。DATA_DIR 不变，无需新数据库配置。
+
+## 主动收录单词卡与 AI 判题
+
+新增 flashcard_collection 表（learner、card_id、added_at，按账号和词条联合唯一）。默认没有记录；旧 flashcards 复习状态和 card_review_events 不作清空或自动收录。复习、收藏接口要求该词已收录，不能用它们绕过收录规则。
+
+GET /api/flashcards 只返回当前学生主动收录的卡；GET /api/flashcards/candidates?mission_id=... 返回已获得收录资格的词；POST /api/flashcards/collect 接收 card_ids 数组，一次可选择 1–30 个词。每个 ID 限长 80；整批校验资格后再原子写入，重复请求不重复加入。
+
+资格来自服务器完成结果，或猜词题的正确提交历史；前端不能指定其他用户。任何关卡答对都不会自动入库。每个练习通关后返回 collection_candidates；猜对一个词时返回 collection_offer。收录、收藏与复习不发金币。
+
+阅读题配置 AI 后使用提供商的结构化语义判断；正误、Mia 反馈、提供商标记与实际原文证据行一起写进 learning_events.feedback。未配置或异常时使用本地规则，反馈包含回退提示。AI 不直接访问或修改 SQLite，金币与进度仍通过既有事务保存。
+
+新增表由应用访问单词卡时自动创建，不需要 MySQL、云数据库或额外数据库凭证。填写模型密钥只改 backend/.env。
+
+
+## 背包与当前服装
+
+沿用 learning.sqlite3，启动自动执行 CREATE TABLE IF NOT EXISTS，不需要新增数据库连接信息。
+
+- wardrobe_items：learner、outfit_id、source、created_at；(learner,outfit_id) 联合主键。粉格任务奖励与蓝格商店购买均按账号唯一保存。
+- wardrobe_preferences：learner 主键、outfit_id、updated_at。新账号默认 school-uniform；默认服装始终拥有，无需创建购买记录。
+- 完成 clothing-labels、clothing-fitting、clothing-checkout 全部三个练习后，发放 pink-gingham 并开启商店。发奖与第三个任务的答案、完成状态、金币在同一事务提交。读取库存时可补发更新前已经满足条件的奖励。
+- 购买 blue-gingham 的服务器价格为 240 金币，流水 source_id=outfit:blue-gingham。购买使用 BEGIN IMMEDIATE；库存插入失败会回滚钱包与流水。服装不会自动穿上。
+
+| 方法与路径 | 用途 |
+| --- | --- |
+| GET /api/wardrobe | 当前穿着、服装目录与归属、商店是否开启、服装店完成数、钱包 |
+| POST /api/wardrobe/equip | 传 outfit_id；仅能穿着自己拥有的服装 |
+| POST /api/wardrobe/purchase | 传 outfit_id；验证解锁、服务器价格与余额后购买 |
+
+身份仍由登录 token 的稳定 UUID 决定，访客另存；不接受请求中的其他用户或价格字段。新单元保留原有账户、结果、历史、词卡与余额，无破坏性迁移。

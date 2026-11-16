@@ -39,6 +39,10 @@ CREATE TABLE IF NOT EXISTS wallet_transactions (
     amount INTEGER NOT NULL CHECK(amount!=0), balance_after INTEGER NOT NULL CHECK(balance_after>=0),
     run_id TEXT REFERENCES runs(id), created_at TEXT NOT NULL, UNIQUE(learner,kind,source_id));
 CREATE INDEX IF NOT EXISTS wallet_transactions_owner ON wallet_transactions(learner,seq);
+CREATE TABLE IF NOT EXISTS wardrobe_items (
+ learner TEXT NOT NULL,outfit_id TEXT NOT NULL,source TEXT NOT NULL,created_at TEXT NOT NULL,PRIMARY KEY(learner,outfit_id));
+CREATE TABLE IF NOT EXISTS wardrobe_preferences (
+ learner TEXT PRIMARY KEY,outfit_id TEXT NOT NULL,updated_at TEXT NOT NULL);
 """
 
 

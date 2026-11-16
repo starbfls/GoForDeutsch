@@ -1,7 +1,7 @@
 """Request payloads shared by learning HTTP routes."""
-from typing import Literal
+from typing import Literal, Annotated
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class StartRequest(BaseModel):
@@ -25,3 +25,8 @@ class ReviewRequest(BaseModel):
 class FavoriteRequest(BaseModel):
     card_id: str = Field(max_length=80)
     favorite: bool
+
+
+class CollectCardsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    card_ids: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(min_length=1, max_length=30)

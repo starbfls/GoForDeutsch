@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useWardrobe } from "@/context/WardrobeContext";
 import { learningApi } from "@/services/api";
 import { sceneGuide, completionDialogue } from "@/features/companion/dialogue";
 import { EMPTY_PROGRESS, friendlyError } from "../catalog";
@@ -8,6 +9,8 @@ const pause = (duration) =>
   new Promise((resolve) => setTimeout(resolve, duration));
 
 export default function useAdventure(user) {
+  const wardrobe = useWardrobe();
+  const [unitId, setUnitId] = useState(() => localStorage.getItem("gfd-unit:" + (user?.username || "guest")) || "kennenlernen");
   const [page, setPage] = useState("town");
   const [data, setData] = useState(null);
   const [progress, setProgress] = useState(EMPTY_PROGRESS);
@@ -78,6 +81,7 @@ export default function useAdventure(user) {
       const { data: result } = await learningApi.start(chosen.id);
       setRun(result);
       if (result.progress) setProgress(result.progress);
+      setUnitId(chosen.unit_id);
       setMission(chosen);
       setScene(destination);
       setPending(null);
@@ -104,6 +108,7 @@ export default function useAdventure(user) {
     image.src = destination.image;
     try {
       if (fromMap && animate) await pause(950);
+      setUnitId(destination.unit_id);
       setRun(null);
       setMission(null);
       setScene(destination);
@@ -148,6 +153,7 @@ export default function useAdventure(user) {
         strategy: result.tutor.strategy,
         assessment: result.assessment,
       });
+      if (result.completed) void wardrobe.refresh();
       if (result.correct) setPending(result);
       else setRun(result);
       setQuestion("");
@@ -172,6 +178,26 @@ export default function useAdventure(user) {
       setSpeech(next.step.prompt);
     }
   };
+  const markCollected = (ids) => {
+    const update = (current) =>
+      current
+        ? {
+            ...current,
+            collection_offer: current.collection_offer?.map((card) => ({
+              ...card,
+              collected: card.collected || ids.includes(card.id),
+            })),
+            collection_candidates: current.collection_candidates?.map(
+              (card) => ({
+                ...card,
+                collected: card.collected || ids.includes(card.id),
+              }),
+            ),
+          }
+        : current;
+    setRun(update);
+    setPending(update);
+  };
   const navigate = (target) => {
     if (busy) return;
     setPage(target);
@@ -183,7 +209,18 @@ export default function useAdventure(user) {
     setExpression("smile");
     setSpeech(GREETING);
   };
+  const activeUnit = data?.units.find((item) => item.id === unitId) || data?.units[0];
+  const unitMissions = data?.missions.filter((item) => item.unit_id === activeUnit?.id) || [];
+  const unitScenes = data?.chapters.filter((item) => item.unit_id === activeUnit?.id) || [];
+  const unitCompleted = unitMissions.filter((item) => progress.completed.includes(item.id)).length;
+  const selectUnit = (id) => {
+    if (busy || !data?.units.some((item) => item.id === id && item.available)) return;
+    setUnitId(id);
+    localStorage.setItem("gfd-unit:" + (user?.username || "guest"), id);
+    navigate("town");
+  };
   return {
+    activeUnit, unitMissions, unitScenes, unitCompleted, selectUnit,
     page,
     data,
     progress,
@@ -215,6 +252,7 @@ export default function useAdventure(user) {
     scene,
     travel,
     enterScene,
+    markCollected,
     load,
     start,
     turn,

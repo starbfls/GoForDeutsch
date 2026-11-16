@@ -21,3 +21,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 AI_ENABLED = os.getenv("AI_ENABLED", "false").lower() == "true"
 AI_DAILY_LIMIT = max(0, int(os.getenv("AI_DAILY_LIMIT", "30")))
+
+AI_PROVIDER = os.getenv("AI_PROVIDER", "openai").lower()
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-flash")
+DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")

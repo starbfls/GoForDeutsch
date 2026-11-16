@@ -10,19 +10,22 @@ import MissionsView from "@/features/adventure/views/MissionsView";
 import NotebookView from "@/features/adventure/views/NotebookView";
 import LessonView from "@/features/adventure/views/LessonView";
 import FlashcardsView from "@/features/flashcards/FlashcardsView";
+import WardrobeView from "@/features/wardrobe/WardrobeView";
 import "./Adventure.css";
 export default function Adventure() {
   const { user, logout } = useAuth();
   const game = useAdventure(user);
   const title = {
-    town: "Kennenlernen",
+    town: game.activeUnit?.title || "Kennenlernen",
     missions: "练习",
     cards: "单词卡",
     notebook: "学习记录",
+    backpack: "背包",
+    shop: "商店",
     lesson: game.scene?.de,
   }[game.page];
   return (
-    <div className={`adventure-app ${game.motion ? "" : "reduce-motion"}`}>
+    <div data-theme={game.activeUnit?.theme || "green"} className={`adventure-app ${game.motion ? "" : "reduce-motion"}`}>
       <AdventureSidebar game={game} />
       <div className="adventure-main">
         <AdventureHeader game={game} user={user} logout={logout} />
@@ -30,7 +33,7 @@ export default function Adventure() {
           <div className="page-heading">
             <h1>{title}</h1>
             {game.page !== "lesson" && game.page !== "cards" && (
-              <UnitSelector units={game.data?.units} />
+              <UnitSelector units={game.data?.units} value={game.activeUnit?.id || "kennenlernen"} onChange={game.selectUnit} />
             )}
           </div>
           {game.error && (
@@ -55,13 +58,15 @@ export default function Adventure() {
               正在加载…
             </div>
           )}
-          <div className="page-surface" key={game.page}>
+          <div className="page-surface" key={game.page + game.activeUnit?.id}>
             {game.page === "town" && <TownView game={game} />}{" "}
             {game.page === "missions" && <MissionsView game={game} />}{" "}
             {game.page === "notebook" && <NotebookView game={game} />}{" "}
             {game.page === "cards" && (
               <FlashcardsView key={user?.username || "guest"} game={game} />
             )}{" "}
+            {game.page === "backpack" && <WardrobeView game={game} />}
+            {game.page === "shop" && <WardrobeView game={game} shop />}
             {game.page === "lesson" && game.scene && <LessonView game={game} />}
           </div>
         </main>

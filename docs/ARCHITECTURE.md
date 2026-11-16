@@ -40,7 +40,7 @@
 
 如果要启用真实 AI，在 `D:\web\GoForDeutsch\backend\.env` 把 `AI_ENABLED` 设为 `true`，在 `OPENAI_API_KEY=` 后填入密钥，再重启启动窗口。不要把密钥写进前端，也不要粘贴到聊天。
 
-第一单元是 Kennenlernen，场景按 bakery → park → school 排序。API 的 chapters 字段为兼容旧版保留，实际表示场景；units 单独表示单元。Einkaufen 仅为不可用目录项。旧任务和词条 ID 不变；已完成或已有进行中记录的任务不因顺序调整重新锁定。
+第一单元是 Kennenlernen，场景按 bakery → park → school 排序。API 的 chapters 字段为兼容旧版保留，实际表示场景；units 单独表示单元。Einkaufen 为第二个可用单元，服装店 → 电器店 → 餐厅。旧任务和词条 ID 不变；已完成或已有进行中记录的任务不因顺序调整重新锁定。
 
 单元入口显示扩展全景地图。enterScene 仅播放镜头并进入场景，不请求任务接口；场景里的“开始练习”调用 start，再请求后端并显示题目。未解锁场景可看预览，开始按钮禁用。减少动态时跳过镜头等待。跨地点练习完成后返回地图，保留原有解锁与进度规则。
 
@@ -53,7 +53,7 @@
 
 - app/repositories/learning_schema.py：增量建表、升级前 SQLite 完整备份、已有进度和旧奖励迁移。
 - app/repositories/records.py：当前学习位置、追加式提交历史和按账号查询。
-- app/repositories/wallet.py：余额、奖励与收支流水，及未来商店的内部幂等扣款入口。
+- app/repositories/wallet.py：余额、奖励与收支流水，及商店的内部幂等扣款入口。
 - app/services/progress.py：把已保存状态汇总为单元/场景/关卡完成状态和可读编号；coins 表示当前金币余额，xp 为兼容别名。
 - app/learning_store.py：同一事务内保存任务、作答原文、当前位置、完成结果和金币，沿用旧的调用接口。
 - app/routers/learning.py：新增本人 progress/history/wallet/wallet/transactions 查询，身份由登录凭证决定。
@@ -70,3 +70,26 @@
 - tutor.py：把规则评估作为辅导上下文；阅读引导找证据，猜词分步提示，写作给局部修改建议。评分、解锁和金币仍由服务器决定。
 
 题目与奖励设计见 UNIT1_DESIGN.md。参考项目 D:/web/praktikum-llm 仅作只读设计参考。
+
+## 主动收录与模型提供商
+
+- app/curriculum/card_links.py：练习关联词、猜词步骤与词卡 ID 的映射；同一个词跨场景复用。
+- app/services/card_collection.py：依据通关结果和正确猜词历史判断资格，组装候选词并校验显式收录；不把目录词条自动填入个人库。
+- app/repositories/flashcards.py：新增 flashcard_collection，与已有复习状态分离；保留去重、账号隔离和复习幂等处理。
+- app/ai/client.py：DeepSeek Chat Completions JSON 与现有 OpenAI Responses 传输。只负责 HTTP 和响应读取，不记录密钥或上游正文。
+- app/ai/reading.py：阅读语义判断和同次反馈；校验严格布尔与原文行号，异常走本地判断。
+- app/tutor.py：共享提供商配置、调用预算与结构化教学反馈；读取当前答案、尝试与提示，不能改金币。
+- WordCollection.jsx / collection.css：答对词汇后的单词收录与完成页的多选收录。useAdventure.markCollected 同步当前步骤与通关候选状态。
+- 个人卡库为空时只显示学习入口；答对后 ExercisePanel 显示绿色成功标识、面板边框和立即变色的“继续”。
+
+backend/.env 配置 AI_PROVIDER=deepseek、DEEPSEEK_API_KEY、DEEPSEEK_MODEL 与 AI_ENABLED。默认模型按 2026-11-16 官方文档配置为 deepseek-flash。无需新增依赖。
+
+
+## 第二单元与服装库存
+
+- app/curriculum/clothing.py、electronics.py、restaurant.py：九个练习与 27 个步骤；shopping_words.py：21 个关联词条；prerequisites.py：单元边界和顺序解锁。第一单元任务 ID 与课程版本保持，新增单元不重置进行中的新版任务。
+- app/wardrobe_catalog.py：服装 ID、价格与奖励条件；repositories/wardrobe.py：库存、当前穿着、自动发奖、原子购买；routers/wardrobe.py：当前学生的三个衣橱接口。
+- learning_schema.py 补建 wardrobe_items 和 wardrobe_preferences；learning_store.save 在完成结果事务内发放服装；wallet.spend_in 在同一连接完成扣款与流水。
+- WardrobeContext.jsx：按当前账号读取库存、刷新和换装，拒绝过期请求覆盖新账号状态。账号切换不重新挂载路由，注册后的用户名欢迎页保留。
+- useAdventure：选择单元与单元内进度；TownMap 接受单元地图，locations.js 管理各地点按钮与镜头；theme.css 管理蓝色单元色与成功反馈的绿色。
+- features/wardrobe：背包、商店与服装卡；components/miaAppearance.js：服装对应图集；Mia.jsx：共用表情与当前服装渲染，保留随机眨眼。

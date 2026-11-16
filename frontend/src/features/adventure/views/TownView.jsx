@@ -2,10 +2,10 @@ import TownMap from "../map/TownMap";
 import MapCompanion from "@/features/companion/MapCompanion";
 import { nextInChapter, unlocked } from "../catalog";
 export default function TownView({ game }) {
-  const scenes = game.data?.chapters || [];
+  const scenes = game.unitScenes;
   const available = (scene) => {
     const next = nextInChapter(
-      game.data?.missions || [],
+      game.unitMissions,
       game.progress,
       scene.id,
     );
@@ -14,6 +14,7 @@ export default function TownView({ game }) {
   return (
     <div className="map-shell">
       <TownMap
+        unit={game.activeUnit}
         scenes={scenes}
         travel={game.travel}
         onSelect={game.enterScene}

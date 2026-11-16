@@ -6,7 +6,9 @@ export default function AdventureHeader({ game, user, logout }) {
     missions: "练习",
     cards: "单词卡",
     notebook: "学习记录",
-    lesson: "Kennenlernen",
+    lesson: game.activeUnit?.title,
+    backpack: "背包",
+    shop: "商店",
   };
   return (
     <header className="adventure-topbar">

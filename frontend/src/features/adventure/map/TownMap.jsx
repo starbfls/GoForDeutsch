@@ -6,15 +6,17 @@ import {
   Croissant,
   TreeDeciduous,
   GraduationCap,
+  Shirt, Headphones, UtensilsCrossed,
 } from "lucide-react";
 import { WORLD, mapCamera, mapPoint } from "./camera";
 import { MAP_LOCATIONS } from "./locations";
 const PLACE_ICONS = {
+  clothing: Shirt, electronics: Headphones, restaurant: UtensilsCrossed,
   bakery: Croissant,
   park: TreeDeciduous,
   school: GraduationCap,
 };
-export default function TownMap({ scenes, travel, onSelect, available, busy }) {
+export default function TownMap({ unit, scenes, travel, onSelect, available, busy }) {
   const viewport = useRef(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
     <section
       ref={viewport}
       className={`town-stage ${travel ? "is-entering" : ""}`}
-      aria-label="小镇学习地图"
+      aria-label={unit?.id === "einkaufen" ? "商场学习地图" : "小镇学习地图"}
       aria-busy={busy}
       data-focused={travel?.id || "overview"}
     >
@@ -46,6 +48,7 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
         data-camera-y={camera.y}
         data-camera-scale={camera.scale}
         style={{
+          backgroundImage: unit?.map_image ? "url(" + unit.map_image + ")" : undefined,
           width: WORLD.width,
           height: WORLD.height,
           transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`,
@@ -76,7 +79,7 @@ export default function TownMap({ scenes, travel, onSelect, available, busy }) {
               )}
               <span className="map-pin-copy">
                 <strong>{scene.location}</strong>
-                <span lang="de">{scene.de}</span>
+                <span lang="de">{scene.map_de || scene.de}</span>
               </span>
               {available(scene) ? (
                 <ArrowUpRight size={18} />

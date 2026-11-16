@@ -1,8 +1,8 @@
-export default function UnitSelector({ units = [], className = "" }) {
+export default function UnitSelector({ units = [], className = "", value, onChange }) {
   return (
     <label className={`unit-selector ${className}`}>
       <span>单元</span>
-      <select aria-label="选择单元" value="kennenlernen" onChange={() => {}}>
+      <select aria-label="选择单元" value={value} onChange={(event) => onChange(event.target.value)}>
         {units.map((unit) => (
           <option key={unit.id} value={unit.id} disabled={!unit.available}>
             {unit.number}. {unit.title}

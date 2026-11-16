@@ -1,4 +1,6 @@
 import {
+  Backpack,
+  Store,
   BookOpen,
   ClipboardList,
   Layers,
@@ -8,10 +10,12 @@ import {
 } from "lucide-react";
 export default function AdventureSidebar({ game }) {
   const items = [
-    ["town", Map, "学习地图"],
+    ["town", Map, "学习地图", "地图"],
     ["missions", ClipboardList, "练习"],
     ["cards", Layers, "单词卡"],
-    ["notebook", BookOpen, "学习记录"],
+    ["notebook", BookOpen, "学习记录", "记录"],
+    ["backpack", Backpack, "背包"],
+    ["shop", Store, "商店"],
   ];
   return (
     <aside className="adventure-sidebar">
@@ -28,7 +32,7 @@ export default function AdventureSidebar({ game }) {
         </span>
       </button>
       <nav aria-label="主导航">
-        {items.map(([id, Icon, label]) => (
+        {items.map(([id, Icon, label, short = label]) => (
           <button
             key={id}
             className={`nav-item ${game.page === id || (id === "missions" && game.page === "lesson") ? "active" : ""}`}
@@ -37,20 +41,20 @@ export default function AdventureSidebar({ game }) {
             title={label}
           >
             <Icon size={21} />
-            <span>{label}</span>
+            <span className="nav-label">{label}</span><span className="nav-short">{short}</span>
           </button>
         ))}
       </nav>
       <div className="sidebar-bottom">
         <div className="unit-progress">
-          <strong>Kennenlernen</strong>
+          <strong>{game.activeUnit?.title}</strong>
           <span>
-            {game.progress.completed.length}/{game.data?.missions.length || 9}
+            {game.unitCompleted}/{game.unitMissions.length || 9}
           </span>
           <div className="tiny-progress">
             <i
               style={{
-                width: `${(game.progress.completed.length / (game.data?.missions.length || 9)) * 100}%`,
+                width: `${(game.unitCompleted / (game.unitMissions.length || 9)) * 100}%`,
               }}
             />
           </div>

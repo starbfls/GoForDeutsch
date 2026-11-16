@@ -1,0 +1,15 @@
+.wardrobe-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.wardrobe-heading p {display:flex;align-items:center;gap:10px}
+.outfit-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),320px));gap:24px}
+.outfit-card {background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.outfit-card.is-equipped {border:2px solid var(--green)}
+.outfit-preview {height:320px;display:flex;align-items:end;justify-content:center;background:linear-gradient(150deg,#e8edf3,#f9f5f1)}
+.outfit-preview .mia-portrait {width:215px}
+.outfit-card-body {padding:22px}
+.outfit-card-body h2 {font-size:22px}
+.outfit-card-body p {display:flex;align-items:center;gap:6px;min-height:32px;margin:8px 0 18px;color:var(--muted)}
+.outfit-card-body button {width:100%}
+.shop-locked {display:flex;align-items:center;flex-direction:column;gap:20px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:50px 24px;text-align:center}
+.shop-locked h2 {font-size:25px}
+.outfit-reward {display:grid;gap:10px;justify-items:center;padding:18px;margin:20px 0;background:#f7edf4;border:1px solid #dcc3d4;border-radius:12px}
+.outfit-reward strong {font-size:21px;color:#77355b}

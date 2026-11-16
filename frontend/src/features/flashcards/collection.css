@@ -1,0 +1,133 @@
+.word-collection {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #ccdcca;
+  border-radius: 12px;
+  background: #f2f7ef;
+  text-align: left;
+}
+.collection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.collection-heading h3 {
+  font-size: 20px;
+  font-weight: 650;
+  margin: 0;
+}
+.collection-choices {
+  display: grid;
+  gap: 10px;
+}
+.collection-choices label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.collection-choices input {
+  width: 20px;
+  height: 20px;
+  accent-color: #25814b;
+  flex-shrink: 0;
+}
+.collection-choices label > span {
+  display: grid;
+  gap: 2px;
+}
+.collection-choices strong,
+.word-collection-inline > strong {
+  font-size: 20px;
+}
+.collection-choices label > span > span {
+  color: #50634f;
+  font-size: 17px;
+}
+.collection-choices label > svg {
+  color: #23844c;
+  margin-left: auto;
+}
+.collection-choices .is-collected {
+  opacity: 0.72;
+}
+.collect-selected-button {
+  width: 100%;
+  margin-top: 16px;
+}
+.word-collection-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.collect-word-button {
+  font-size: 17px;
+  min-height: 44px;
+  padding: 9px 12px;
+}
+.completion:has(.word-collection) {
+  padding: 28px;
+}
+.exercise-panel[data-state="passed"] {
+  border-color: #58a477;
+  box-shadow: 0 0 0 2px #c4e8ce;
+}
+.exercise-panel .answer-feedback.correct {
+  font-size: 20px;
+  font-weight: 700;
+  background: #e5f5e8;
+  border: 1px solid #a9d5b5;
+  border-radius: 9px;
+  padding: 13px 15px;
+  color: #16683b;
+}
+.exercise-bottom > .primary-button.answer-continue {
+  background: #16864b;
+  border-color: #147a43;
+  box-shadow: 0 4px 0 #0e6033;
+  color: white;
+  font-weight: 700;
+}
+.exercise-bottom > .primary-button.answer-continue:hover {
+  background: #0f743e;
+}
+@media (max-width: 650px) {
+  .word-collection {
+    padding: 15px;
+  }
+  .completion:has(.word-collection) {
+    padding: 24px 16px;
+  }
+  .word-collection-inline {
+    gap: 12px;
+  }
+  .collection-choices strong {
+    font-size: 19px;
+  }
+}
+
+/* Passing a question changes its action color immediately. */
+.exercise-bottom > .primary-button {
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
+}
+
+.collection-choices {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  column-gap: 18px;
+}
+.collection-choices label > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.empty-state p {
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 8px 0 18px;
+}

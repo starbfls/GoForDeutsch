@@ -1,11 +1,15 @@
+import { useWardrobe } from "@/context/WardrobeContext";
 import useMiaBlink from "./useMiaBlink";
 import {
-  MIA_APPEARANCE,
+  OUTFIT_APPEARANCES,
   MIA_EXPRESSIONS,
   miaSpriteStyle,
 } from "./miaAppearance";
 
-export default function Mia({ expression = "smile", className = "" }) {
+export default function Mia({ expression = "smile", className = "", outfit }) {
+  const wardrobe = useWardrobe();
+  const outfitId = outfit || wardrobe?.inventory.equipped || "school-uniform";
+  const appearance = OUTFIT_APPEARANCES[outfitId] || OUTFIT_APPEARANCES["school-uniform"];
   const name = Object.hasOwn(MIA_EXPRESSIONS, expression)
     ? expression
     : "smile";
@@ -18,12 +22,12 @@ export default function Mia({ expression = "smile", className = "" }) {
       aria-label={MIA_EXPRESSIONS[name].label}
       data-expression={name}
       data-blink={blink ? "closed" : "open"}
-      data-outfit={MIA_APPEARANCE.id}
+      data-outfit={appearance.id}
     >
       <div
-        key={name}
+        key={appearance.id + name}
         className={`mia-sprite ${name === "smile" ? "is-idle" : ""}`}
-        style={miaSpriteStyle(frame)}
+        style={miaSpriteStyle(frame, appearance.id)}
       />
     </div>
   );

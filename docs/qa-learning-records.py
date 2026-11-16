@@ -1,5 +1,6 @@
 """Isolated HTTP check for account-bound study history and persisted coins; no paid AI."""
 import json
+import uuid
 import os
 import socket
 import subprocess
@@ -81,6 +82,8 @@ def main():
             initial = request("/api/learning/progress", token=token_a)
             assert initial["current"] is None and initial["xp"] == 0
             assert all(item["status"] == "not_started" for item in initial["mission_statuses"])
+            assert request("/api/flashcards", token=token_a)["cards"] == []
+            request("/api/flashcards/collect", {"card_ids":["bakery-1"]}, token_a, expected=403)
             run = request("/api/learning/start", {"mission_id": "bakery-first"}, token_a)
             original_run = dict(run)
             assert run["progress"]["current"]["mission_number"] == 1
@@ -105,6 +108,15 @@ def main():
                         "run_id": run["run_id"], "revision": run["revision"], "action": "answer",
                         "answer": answer, "xp": 999999, "balance": 999999,
                     }, token_a)
+            assert request("/api/flashcards", token=token_a)["cards"] == []
+            choices = request("/api/flashcards/candidates?mission_id=bakery-first", token=token_a)
+            assert len(choices["cards"]) == 4
+            assert request("/api/flashcards/collect", {"card_ids":["bakery-1"]}, token_a)["added_count"] == 1
+            assert request("/api/flashcards/collect", {"card_ids":["bakery-1"]}, token_a)["added_count"] == 0
+            request("/api/flashcards/collect", {"card_ids":["bakery-1"]}, token_b, expected=403)
+            request("/api/flashcards/collect", {"card_ids":["bakery-1"],"learner":"forged"}, token_a, expected=422)
+            assert request("/api/flashcards", token=token_b)["cards"] == []
+            request("/api/flashcards/review", {"card_id":"bakery-1","rating":"good","review_id":str(uuid.uuid4())}, token_a)
             balance = request("/api/learning/wallet", token=token_a)
             assert balance == {"currency": "COIN", "balance": 40, "total_earned": 40, "total_spent": 0}
             assert len(request("/api/learning/wallet/transactions", token=token_a)["items"]) == 1
@@ -125,6 +137,8 @@ def main():
             assert request("/api/auth/me", token=token_a)["id"] == original_id
             assert request("/api/learning/progress", token=token_a)["current"]["run_id"] == final["current"]["run_id"]
             assert request("/api/learning/wallet", token=token_a)["balance"] == 40
+            restored_cards = request("/api/flashcards", token=token_a)["cards"]
+            assert len(restored_cards) == 1 and restored_cards[0]["review"]["reviews"] == 1
             assert len(request("/api/learning/history", token=token_a)["items"]) == 8
             assert request("/api/learning/history", token=token_b)["items"] == []
             stop(process)
@@ -132,7 +146,7 @@ def main():
             log.flush()
             log.seek(0)
             assert "Traceback" not in log.read()
-            print("HTTP checks passed: account isolation, exact answers/questions, statuses, current position, bounded history pages, one reward across replays, rejected balance writes, and login/server-restart persistence.")
+            print("HTTP checks passed: account isolation, exact answers/questions, statuses, current position, bounded history pages, one reward across replays, rejected balance writes, explicit flashcard collection, and login/server-restart persistence.")
         finally:
             stop(process)
             log.close()
