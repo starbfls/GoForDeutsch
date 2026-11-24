@@ -102,3 +102,10 @@ GET /api/flashcards 只返回当前学生主动收录的卡；GET /api/flashcard
 | POST /api/wardrobe/purchase | 传 outfit_id；验证解锁、服务器价格与余额后购买 |
 
 身份仍由登录 token 的稳定 UUID 决定，访客另存；不接受请求中的其他用户或价格字段。新单元保留原有账户、结果、历史、词卡与余额，无破坏性迁移。
+
+
+## 阅读与写作：已确认和未确认
+
+沿用现有表，不需要数据库迁移。已审定正确表达直接通过；其他阅读与写作使用一次结构化语义评估。feedback.assessment 包含 judge 与 status，段落模型评估还包含逐项内容证据、语言与长度信息。
+
+status=unconfirmed 时，learning_events.correct 保存 null，原文、时间与本次提交次数照常记录；当前位置不前进，也不发金币。runs.state.unconfirmed_attempts 记录这些提交次数，计算独立完成时不把未判定的回答冒充答错。后续正式判对后才推进；旧记录和奖励不改写。完整规则见 ASSESSMENT.md。

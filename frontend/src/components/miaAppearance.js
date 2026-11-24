@@ -10,6 +10,7 @@ export const MIA_APPEARANCE = {
 };
 
 export const OUTFIT_APPEARANCES = {
+  "casual-hoodie": { id: "casual-hoodie", image: "/assets/characters/mia/casual-hoodie.png", columns: 4, rows: 3, zoom: 1, offsets: { blink: [0, 0] } },
   "school-uniform": MIA_APPEARANCE,
   "pink-gingham": { id: "pink-gingham", image: "/assets/characters/mia/pink-gingham.png", columns: 4, rows: 3, zoom: 1, offsets: { blink: [0, 0] } },
   "blue-gingham": { id: "blue-gingham", image: "/assets/characters/mia/blue-gingham.png", columns: 4, rows: 3, zoom: 1, offsets: { blink: [0, 0] } },

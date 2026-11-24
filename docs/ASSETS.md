@@ -68,3 +68,12 @@ focus 已替换原来半闭眼、托脸的状态，改为睁眼、眉毛舒展�
 miaAppearance.js 的 OUTFIT_APPEARANCES 分别指定图集、显示比例和闭眼对齐参数；MIA_EXPRESSIONS 的名称与顺序共用。地图、场景和词卡中的 Mia 读取账号当前穿着；背包预览通过 outfit 属性指定服装并使用 smile。
 
 完整初始及修订提示词：[asset-prompts-unit2.json](asset-prompts-unit2.json)。浏览器表情预览：artifacts/mia-pink-gingham-expressions.png、artifacts/mia-blue-gingham-expressions.png。
+
+
+## 连帽常服 · casual-hoodie
+
+新增商店服装，售价与蓝格便服相同，为240金币。使用用户 Mirai_ML_Anime_Profile.png 作为衣服参考，现有粉格图集作为角色身份与格子顺序参考，由内置 image_gen 生成。
+
+成品：frontend/public/assets/characters/mia/casual-hoodie.png，1182×1330，RGBA透明，4列×3行。保留白色短袖连帽外套、深蓝条纹、红色格纹内搭、波点发结、蓝色发夹及蓝裙上缘，包含相同11种表情与闭眼帧。默认预览为smile，表情与随机眨眼使用现有组件。
+
+完整提示词：[asset-prompts-casual-hoodie.json](asset-prompts-casual-hoodie.json)。浏览器逐格预览：artifacts/mia-casual-hoodie-expressions.png；商店与背包：artifacts/hoodie-shop.png、hoodie-backpack.png。生成原件已移入D盘，用户Downloads中的参考图未修改。

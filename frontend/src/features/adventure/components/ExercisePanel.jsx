@@ -50,9 +50,11 @@ export default function ExercisePanel({ game }) {
           <span>
             {feedback.correct
               ? "回答正确"
-              : feedback.action === "answer"
-                ? "再试一次"
-                : "提示见左侧"}
+              : feedback.unconfirmed
+                ? "暂未确认，答案已保留"
+                : feedback.action === "answer"
+                  ? "再试一次"
+                  : "提示见左侧"}
           </span>
         </div>
       )}

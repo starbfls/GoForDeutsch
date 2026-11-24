@@ -11,13 +11,17 @@ def check_answer(step, answer):
     if "rubric" in step:
         from .writing import assess_writing
         return assess_writing(step, answer)["correct"]
+    if re.search(r"[\u4e00-\u9fff]", answer):
+        return False
     value = normalize(answer)
+    if any(re.fullmatch(pattern, value) for pattern in step.get("accepted_patterns", [])):
+        return True
     if step["type"] == "choice":
         return value == step["answer"]
     if step["type"] == "tiles":
         return value in {normalize(a) for a in step["answers"]}
     if "answers" in step:
-        if value in {normalize(item) for item in step["answers"]}:
+        if value in {normalize(item) for item in [*step["answers"], step.get("example", "")]}:
             return True
         if step.get("mode") == "reading" and normalize(step.get("example","")).endswith("euro"):
             amounts = {"ein":1,"einen":1,"eins":1,"1":1,"zwei":2,"2":2,"vier":4,"4":4,"fuenf":5,"5":5,"vierundzwanzig":24,"24":24,"sechsundzwanzig":26,"26":26,"fuenfunddreissig":35,"35":35,"fuenfzig":50,"50":50}

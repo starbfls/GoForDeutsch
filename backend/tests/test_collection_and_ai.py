@@ -123,7 +123,7 @@ class CollectionAndAITests(unittest.TestCase):
         try:
             reply={"correct":True,"evidence_line":1,"message":"你读懂了想买的食物，表达清楚。","expression":"proud","strategy":"transfer"}
             with patch("app.ai.client.urllib.request.urlopen",return_value=self.response(reply)) as request:
-                result=self.answer(run,"Ich hätte gern ein frisches Brötchen.")
+                result=self.answer(run,"Für mich bitte ein knuspriges Brötchen.")
             self.assertTrue(result["correct"])
             self.assertEqual(result["assessment"]["judge"],"deepseek")
             self.assertEqual(request.call_count,1)
@@ -133,11 +133,11 @@ class CollectionAndAITests(unittest.TestCase):
             self.assertIn("api.deepseek.com",request.call_args.args[0].full_url)
             self.assertEqual(result["progress"]["coins"],0)
             with self.store.connection() as db:
-                self.assertIn("frisches",db.execute("SELECT answer FROM learning_events").fetchone()[0])
+                self.assertIn("knuspriges",db.execute("SELECT answer FROM learning_events").fetchone()[0])
         finally:
             for item in reversed(patches):item.stop()
 
-    def test_timeout_falls_back_without_second_network_call(self):
+    def test_known_answer_needs_no_network_even_during_outage(self):
         patches=self.ai()
         for item in patches:item.start()
         try:
@@ -145,8 +145,8 @@ class CollectionAndAITests(unittest.TestCase):
                 result=self.answer(self.start(),"ein Broetchen")
             self.assertTrue(result["correct"])
             self.assertEqual(result["tutor"]["source"],"local")
-            self.assertTrue(result["tutor"]["notice"])
-            self.assertEqual(request.call_count,1)
+            self.assertIsNone(result["tutor"]["notice"])
+            request.assert_not_called()
         finally:
             for item in reversed(patches):item.stop()
 
@@ -172,7 +172,7 @@ class CollectionAndAITests(unittest.TestCase):
                 result=self.answer(self.start(),"Ein Brötchen")
             request.assert_not_called()
             self.assertTrue(result["correct"])
-            self.assertTrue(result["tutor"]["notice"])
+            self.assertIsNone(result["tutor"]["notice"])
         finally:
             for item in reversed(patches):item.stop()
 
@@ -207,8 +207,9 @@ class CollectionAndAITests(unittest.TestCase):
                 response=MagicMock()
                 response.__enter__.return_value.read.return_value=json.dumps({"choices":[{"finish_reason":reason,"message":{"content":content}}]}).encode()
                 with patch("app.ai.client.urllib.request.urlopen",return_value=response):
-                    result=self.answer(self.start(),"Ein Brötchen")
-                self.assertTrue(result["correct"])
+                    result=self.answer(self.start(),"Für mich bitte ein knuspriges Brötchen.")
+                self.assertFalse(result["correct"])
+                self.assertEqual(result["assessment"]["status"],"unconfirmed")
                 self.assertEqual(result["assessment"]["judge"],"local")
                 self.assertTrue(result["tutor"]["notice"])
         finally:

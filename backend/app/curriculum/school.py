@@ -2,11 +2,11 @@
 from .builders import mission, text_step
 ROLE={"title":"角色卡 · Alex","facts":["名字：Alex","年龄：14 岁","喜欢的课程：Deutsch","喜欢的活动：Fußball spielen"]}
 SCHEDULE={"title":"Alex 的星期一","facts":["Montag：Deutsch","喜欢德语课","用两句话介绍课表和喜好"]}
-NAME={"id":"name","label":"介绍名字","patterns":[r"ich heisse alex",r"mein name ist alex",r"ich bin alex"]}
-AGE={"id":"age","label":"介绍年龄","patterns":[r"ich bin (14|vierzehn)( jahre( alt)?)?"]}
-SUBJECT={"id":"subject","label":"表达课程喜好","patterns":[r"ich mag deutsch",r"deutsch mag ich",r"ich lerne gerne? deutsch",r"mein lieblingsfach ist deutsch"]}
-HOBBY={"id":"hobby","label":"表达活动喜好","patterns":[r"ich spiele gerne? fussball",r"ich spiele fussball gerne?",r"mein hobby ist fussball",r"fussball ist mein hobby"]}
-MONDAY={"id":"schedule","label":"说明星期一有德语课","patterns":[r"am montag (habe ich|haben wir) deutsch",r"(ich habe|wir haben) am montag deutsch",r"montags (habe ich|haben wir) deutsch"]}
+NAME={"id":"name","label":"介绍名字","patterns":[r"ich heisse alex",r"mein name ist alex",r"ich bin alex",r"alex ist mein name"]}
+AGE={"id":"age","label":"介绍年龄","patterns":[r"ich bin (erst |schon )?(14|vierzehn)( jahre( alt)?)?",r"(14|vierzehn) jahre alt bin ich"]}
+SUBJECT={"id":"subject","label":"表达课程喜好","patterns":[r"ich (mag|liebe) deutsch( sehr| besonders| sehr gerne?| gerne?)?",r"deutsch mag ich( sehr| besonders| sehr gerne?| gerne?)?",r"ich lerne (sehr )?gerne? deutsch",r"deutsch lerne ich (sehr )?gerne?",r"mein lieblingsfach ist deutsch",r"deutsch ist mein lieblingsfach"]}
+HOBBY={"id":"hobby","label":"表达活动喜好","patterns":[r"ich spiele (sehr )?gerne? fussball",r"ich spiele fussball (sehr )?gerne?",r"fussball spiele ich (sehr )?gerne?",r"am liebsten spiele ich fussball",r"ich mag fussball( spielen)?",r"mein hobby ist fussball( spielen)?",r"fussball( spielen)? ist mein hobby",r"mein lieblingssport ist fussball"]}
+MONDAY={"id":"schedule","label":"说明星期一有德语课","patterns":[r"am montag (habe ich|haben wir) deutsch(unterricht)?",r"(ich habe|wir haben) am montag deutsch(unterricht)?",r"montags (habe ich|haben wir) deutsch(unterricht)?",r"(ich habe|wir haben) montags deutsch(unterricht)?"]}
 def write(sid,prompt,german,example,hints,explanation,**options):
     options.setdefault("brief",ROLE)
     return text_step(sid,prompt,german,example,hints,explanation,max_length=1000,**options)

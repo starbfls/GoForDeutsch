@@ -93,3 +93,10 @@ backend/.env 配置 AI_PROVIDER=deepseek、DEEPSEEK_API_KEY、DEEPSEEK_MODEL 与
 - WardrobeContext.jsx：按当前账号读取库存、刷新和换装，拒绝过期请求覆盖新账号状态。账号切换不重新挂载路由，注册后的用户名欢迎页保留。
 - useAdventure：选择单元与单元内进度；TownMap 接受单元地图，locations.js 管理各地点按钮与镜头；theme.css 管理蓝色单元色与成功反馈的绿色。
 - features/wardrobe：背包、商店与服装卡；components/miaAppearance.js：服装对应图集；Mia.jsx：共用表情与当前服装渲染，保留随机眨眼。
+
+
+## 按任务判题，避免把未匹配当作错误
+
+阅读、短句和段落写作共用“本地正确证据优先，未覆盖表达交给语义评估”的流程。answer_variants.py 组织已审定整句族；assessment_prompts.py 区分阅读信息与写作核心语言标准；ai/writing.py 校验逐项证据、ID、严格布尔与明确长度要求。正误与反馈来自同一次评估，成功文案由服务器按验证后的结果生成。
+
+ai/local_assessment.py 区分不正确与尚未确认；learning.py 保存未确认原文但不扣独立资格、不推进或发奖。WritingFeedback 隐藏未确认的缺项清单，ExercisePanel 显示保留答案的状态。提示与提问的 correct_by_rules 为 null，不预先假定学生答错。详细设计、参考项目的取舍和测试见 ASSESSMENT.md。

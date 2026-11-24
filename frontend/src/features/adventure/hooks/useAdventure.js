@@ -148,6 +148,7 @@ export default function useAdventure(user) {
       if (result.tutor.notice) setToast(result.tutor.notice);
       setFeedback({
         correct: result.correct,
+        unconfirmed: result.assessment?.status === "unconfirmed",
         action,
         source: result.tutor.source,
         strategy: result.tutor.strategy,

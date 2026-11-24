@@ -8,6 +8,8 @@ from app.tutor import respond
 from app.curriculum import CURRENT_VERSION
 from app.services.progress import progress_data
 from app.ai.reading import evaluate_reading
+from app.ai.writing import evaluate_writing
+from app.tutor import local_reply
 from app.services.card_collection import candidates
 from app.curriculum.card_links import GUESS_CARDS
 from app.curriculum.prerequisites import available
@@ -61,29 +63,40 @@ def submit_turn(store, body, who):
         correct = False
         assessment = None
         judged_tutor = None
+        unconfirmed = False
         if body.action == "answer":
             state["attempts"][sid] = state["attempts"].get(sid, 0) + 1
             if len(body.answer) > step.get("max_length",300):
                 raise HTTPException(422,"回答过长，请围绕当前问题简短作答。")
-            evaluation = evaluate_reading(step, state, body.answer, store) if step.get("mode") == "reading" else assess_answer(step, body.answer)
+            if step.get("mode") == "reading":
+                evaluation = evaluate_reading(step, state, body.answer, store)
+            elif step.get("mode") == "writing":
+                evaluation = evaluate_writing(step, state, body.answer, store)
+            else:
+                evaluation = assess_answer(step, body.answer)
+                evaluation["tutor"] = local_reply(step, state, "answer", evaluation["correct"], evaluation["assessment"], answer=body.answer)
             judged_tutor = evaluation.get("tutor")
             correct, assessment = evaluation["correct"], evaluation["assessment"]
+            unconfirmed = bool(assessment and assessment.get("status") == "unconfirmed")
+            if unconfirmed:
+                pending_counts = state.setdefault("unconfirmed_attempts", {})
+                pending_counts[sid] = pending_counts.get(sid, 0) + 1
         elif body.action in {"hint", "example", "ask"}:
             state["hints"][sid] = state["hints"].get(sid, 0) + 1
         tutor = judged_tutor or respond(step, state, body.action, body.answer, body.question, correct, assessment)
         if correct:
-            independent = state["attempts"][sid] == 1 and not state["hints"].get(sid)
+            independent = state["attempts"][sid] - state.get("unconfirmed_attempts", {}).get(sid, 0) == 1 and not state["hints"].get(sid)
             state["evidence"].append({"step_id": sid, "skill": step["skill"], "independent": independent, "attempts": state["attempts"][sid], "hints": state["hints"].get(sid, 0)})
             state["index"] += 1
             state["completed"] = state["index"] >= len(mission["steps"])
-        elif body.action == "answer":
+        elif body.action == "answer" and not unconfirmed:
             # Corrective feedback is help too, even without pressing the hint button.
             state["hints"][sid] = state["hints"].get(sid, 0) + 1
         event = {
             "step_id": sid, "step_index": step_index, "action": body.action,
             "answer": body.answer if body.action == "answer" else "",
             "question": body.question if body.action == "ask" else "",
-            "correct": correct if body.action == "answer" else None,
+            "correct": correct if body.action == "answer" and not unconfirmed else None,
             "attempt_count": state["attempts"].get(sid, 0), "hint_count": state["hints"].get(sid, 0),
             "feedback": {**tutor,"assessment":assessment},
         }

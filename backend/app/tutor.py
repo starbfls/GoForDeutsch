@@ -59,7 +59,7 @@ def local_reply(step, state, action, correct=False, assessment=None, notice=None
         reply = TutorReply(message=message, expression="proud", strategy="transfer")
     else:
         reply = TutorReply(message="我们再检查一下。" + choices[min(hints, len(choices)-1)], expression="focus", strategy="retry")
-    if assessment and assessment.get("kind") == "writing" and not correct and action == "answer":
+    if assessment and assessment.get("kind") in {"writing", "writing_short"} and not correct and action == "answer":
         if assessment.get("issues"):
             reply = TutorReply(message=assessment["issues"][0], expression="ponder", strategy="retry")
     return {**reply.model_dump(), "source": "local", "notice": notice}
@@ -71,12 +71,12 @@ INSTRUCTIONS = """你是 Mia，约14岁中文母语学生的德语A1学习伙伴
 阅读引导回到原文证据；意思正确的同义表达有效，bitte只作礼貌建议，不是通关条件。
 猜词用线索帮助回忆；hint/retry不直接给目标词；只有example请求可以给示例。
 写作围绕内容、结构和一两处语言问题给修改建议，不直接重写整段。
-评分由提供的correct_by_rules决定，不能自行改变。你不能操作金币、解锁、学习记录或单词卡收录。
+仅 action=answer 且 correct_by_rules 为布尔值时，按该判定解释，不能自行改变。提示、例句和提问不是判题，null 不代表答错；可以解释合法表达，但不擅自宣布通关。你不能操作金币、解锁、学习记录或单词卡收录。
 不要求发音、语音或个人资料；不输出HTML、链接或额外题目。输出严格JSON。"""
 
 def respond(step, state, action, answer="", question="", correct=False, assessment=None):
     context = {"step": step, "action": action, "answer": answer, "question": question,
-        "correct_by_rules": correct, "assessment_by_rules": assessment,
+        "correct_by_rules": correct if action == "answer" else None, "assessment_by_rules": assessment,
         "hint_count": state["hints"].get(step["id"], 0), "attempt_count": state["attempts"].get(step["id"], 0)}
     reply, notice = request_json(INSTRUCTIONS, context, TutorReply)
     if reply is not None:

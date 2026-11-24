@@ -150,3 +150,26 @@
 截图：artifacts/unit2-map-1440.png、unit2-map-1920.png、unit2-map-2560.png、unit2-map-390.png、unit2-map-320.png、unit2-clothing-preview.png、unit2-electronics-preview.png、unit2-restaurant-preview.png、unit2-outfit-reward.png、unit2-backpack-pink.png、unit2-shop-purchased.png、unit2-flashcards.png、mia-pink-gingham-expressions.png、mia-blue-gingham-expressions.png。完整素材提示词见 asset-prompts-unit2.json。
 
 复现第二单元浏览器检查：先指定 D 盘 backend/.qa-data-* 的 DATA_DIR、AI_ENABLED=false，启动独立后端及 Chrome 调试端口，设置 GFD_QA_URL / GFD_CDP_URL 后运行 node docs/qa-unit2.mjs。脚本只向隔离库写第一单元完成记录作为前置，随后在界面实际完成第二单元全部步骤。seed-unit2-qa.py 拒绝真实数据目录。
+
+## 2026-11-17：按任务语义判题，修复合法表达误判
+
+- 根因：写作仍由固定答案/整句正则决定，LLM 只能解释本地结果；阅读本地列表也漏掉完整原句。Mia 因而可能承认表达正确却继续要求改写。
+- 增加两单元审定句式族和段落常见结构，包含物主代词、地点谓语、换序、完整原句、礼貌请求等。已审定表达直接通过，模型不能推翻；所有36个阅读/写作步骤的示例均无需网络确认。
+- 阅读和短句/段落写作的未覆盖表达改用一次结构化语义判题。写作检查内容标准、核心语言与明确长度要求，校验逐项 ID、学生原文证据、严格布尔和判定一致性。正确文案由服务器按验证后的结果生成，不带模型臆造的强制改写。
+- **96 项后端测试通过**，新增17项覆盖截图作答、跨单元变体、语法/事实负例、段落替代表达、隐藏答案规则、一次模型判定、缺项、矛盾/重复/伪造证据、严格布尔、句数约束、额度/超时回退、未确认历史与独立完成，以及提问不预标为答错。
+- 使用现有 DeepSeek 配置做3次真实调用：书在 Schulrucksack 的合法表达、Mia entscheidet sich für 两件衣服均判对；Ich habe 14 Jahre alt. 的核心年龄结构被拒绝。调用受原有每日30次上限约束，不改上限、不记录真实学生答案或进度。结果在 artifacts/assessment-live.json；正向反馈随后改为服务器生成，以移除一次模型返回中没有必要的改进文字。
+- 浏览器在独立8039/9235环境复现两条截图：Mein Buch ist in meinem Rucksack. 和完整服装购物句都直接通过，显示绿色完成/继续与原文证据，不要求改成 im。还检查 AI 关闭时未覆盖的合法句子显示未确认、保留输入、不假报缺项，换用审定表达后可继续；无运行异常。
+- 前端构建与 ESLint 通过。代码、检查脚本、截图及测试目录均在 D 盘。参考 D:/web/praktikum-llm 的任务/证据/下一步 Prompt，未改动参考项目；未改变原账号、现有进度、历史答案或金币。
+- 本轮测试数据库和专用浏览器环境验证后清理。当前课程版本保持2，新增判断不重置进行中的新版任务。
+
+设计、标准与维护位置：ASSESSMENT.md。截图：artifacts/assessment-school-correct.png、assessment-clothing-correct.png、assessment-unconfirmed.png。真实请求检查需显式 python docs/qa-live-assessment.py --live，最多3次；不带参数不会调用。
+
+
+## 2026-11-17：商店新增连帽常服
+
+- 参考用户提供的 Mirai_ML_Anime_Profile.png，用内置 image_gen 生成完整12帧透明图集。逐格浏览器检查表情、服装一致性、透明边缘与格子裁切；默认smile，保留随机闭眼与恢复。
+- 新SKU casual-hoodie，中文名连帽常服，服务器价格240金币。沿用服装店通关解锁、账号库存、幂等扣款与背包穿着，不修改原服装或奖励。
+- 现有10项后端购物/衣橱测试通过；前端生产构建与ESLint通过。
+- 浏览器验证新商品240价格、微笑预览、660余额购买后420、重复请求不再扣款、背包穿着、地图/场景/单词卡同步、刷新保留、随机眨眼、换回校服、新访客不能拥有他人服装，以及320/390px无横向溢出。无页面运行异常。
+- 使用独立8040服务、9236浏览器与D盘测试数据库；不修改真实账号/余额，不调用教学LLM。生成文件已从C盘移入D盘，专用测试数据和浏览器验证后清理。
+- 提示词与参考来源保存在asset-prompts-casual-hoodie.json。浏览器脚本qa-hoodie.mjs、逐格预览脚本qa-mia-outfits.mjs支持按服装检查。

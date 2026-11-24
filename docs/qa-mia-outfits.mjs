@@ -6,7 +6,7 @@ try {
   await send("Emulation.setDeviceMetricsOverride", { width: 1340, height: 730, deviceScaleFactor: 1, mobile: false });
   await send("Page.navigate",{url:base});
   await until("Boolean(document.querySelector('.mia-sprite'))","app styles ready");
-  for(const id of ["pink-gingham","blue-gingham"]) {
+  for(const id of (process.env.GFD_QA_OUTFIT ? [process.env.GFD_QA_OUTFIT] : Object.keys(OUTFIT_APPEARANCES))) {
     const frames=Object.entries(MIA_EXPRESSIONS).map(([name,expression])=>({name,label:expression.label,style:miaSpriteStyle(name,id)}));
     await evaluate(`(()=>{
       document.body.innerHTML='<main class="adventure-app" style="padding:20px;background:#dce8f3"><h1 style="font-size:24px;margin:0 0 16px">${id}</h1><div id="frames" style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px"></div></main>';
@@ -21,5 +21,5 @@ try {
     assert(await evaluate("document.querySelectorAll('.mia-sprite').length===12"),"all expressions");
     await screenshot("mia-"+id+"-expressions.png");
   }
-  console.log("Both outfit atlases rendered: 12 frames each.");
+  console.log("Selected outfit atlases rendered: 12 frames each.");
 } finally { socket.close(); }

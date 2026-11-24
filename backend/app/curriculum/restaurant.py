@@ -5,11 +5,11 @@ def write(sid,prompt,question,example,hints,answers=None,rubric=None):
     extra={"brief":BRIEF,"max_length":1000}
     if rubric:extra["rubric"]=rubric
     return text_step(sid,prompt,question,example,hints,"表达清楚了自己的用餐需要，再试着换个场景使用。",answers=answers,**extra)
-TABLE={"id":"table","label":"说明两人用餐","patterns":[r"wir sind zu zweit",r"einen tisch fuer (zwei|2)( personen)?( bitte)?",r"wir moechten einen tisch fuer (zwei|2)( personen)?( bitte)?"]}
-PIZZA={"id":"food","label":"点一份披萨","patterns":[r"ich (moechte|nehme|haette gerne?) (bitte )?eine pizza( ohne fleisch)?( bitte)?",r"eine pizza( ohne fleisch)?( bitte)?"]}
-VEGGIE={"id":"vegetarian","label":"说明不要加肉","patterns":[r"(ich (moechte|nehme|haette gerne?) (bitte )?)?eine pizza ohne fleisch( bitte)?"]}
-WATER={"id":"drink","label":"点水","patterns":[r"ich trinke( gerne?)? wasser",r"ich (moechte|nehme) (bitte )?(ein )?wasser( bitte)?",r"(ein )?wasser( bitte)?"]}
-BILL={"id":"bill","label":"请求结账","patterns":[r"die rechnung( bitte)?",r"ich moechte( bitte)? (be)?zahlen",r"kann ich( bitte)? die rechnung haben"]}
+TABLE={"id":"table","label":"说明两人用餐","patterns":[r"wir sind (zu zweit|zwei personen|2 personen)",r"einen tisch fuer (zwei|2)( personen)?( bitte)?",r"(wir moechten|wir haetten gerne?|ich moechte|ich haette gerne?) (bitte )?einen tisch fuer (zwei|2)( personen)?( bitte)?"]}
+PIZZA={"id":"food","label":"点一份披萨","patterns":[r"ich (moechte|nehme|bestelle|haette gerne?) (bitte )?eine (pizza( ohne fleisch)?|vegetarische pizza)( bitte)?",r"eine (pizza( ohne fleisch)?|vegetarische pizza)( bitte)?"]}
+VEGGIE={"id":"vegetarian","label":"说明不要加肉","patterns":[r"(ich (moechte|nehme|bestelle|haette gerne?) (bitte )?)?eine (pizza ohne fleisch|vegetarische pizza)( bitte)?"]}
+WATER={"id":"drink","label":"点水","patterns":[r"ich trinke( gerne?)? wasser",r"ich (moechte|nehme|bestelle|haette gerne?) (bitte )?(ein |ein glas )?wasser( bitte)?",r"(ein |ein glas )?wasser( bitte)?"]}
+BILL={"id":"bill","label":"请求结账","patterns":[r"die rechnung( bitte)?",r"ich moechte( bitte)? (be)?zahlen",r"(kann|koennte|darf) ich( bitte)? die rechnung (haben|bekommen)( bitte)?",r"(koennen|koennten) sie (mir|uns)( bitte)? die rechnung bringen( bitte)?"]}
 MISSIONS=[
 mission("restaurant-order","写一句点餐回应",50,"writing","先用短句表达，礼貌用语可以灵活放置。",[
 write("menu","向服务员要菜单。","Du möchtest die Speisekarte.","Die Speisekarte, bitte.",["先找到菜单的德语单词。","可以直接说名词，也可以用 Ich möchte …。"],["Die Speisekarte bitte","Ich möchte die Speisekarte","Kann ich bitte die Speisekarte haben"]),

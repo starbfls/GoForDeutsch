@@ -1,4 +1,5 @@
 """Unit catalog; stable IDs preserve previous progress and review history."""
+from .answer_variants import enrich
 from .bakery import MISSIONS as BAKERY
 from .school import MISSIONS as SCHOOL
 from .park import MISSIONS as PARK
@@ -17,6 +18,8 @@ CURRENT_VERSION = 2
 MISSIONS=[]
 for chapter, lessons in zip(CHAPTERS, [BAKERY,PARK,SCHOOL,CLOTHING,ELECTRONICS,RESTAURANT]):
     for lesson in lessons:
+        for step in lesson["steps"]:
+            enrich(lesson["id"], step)
         MISSIONS.append({**lesson,"title":LESSON_TITLES.get(lesson["id"],lesson["title"]),"intro":LESSON_INTROS.get(lesson["id"],lesson["intro"]),"unit_id":chapter["unit_id"],"chapter_id":chapter["id"],"chapter_number":chapter["number"],"requires":MISSIONS[-1]["id"] if MISSIONS else None})
 
 
@@ -25,7 +28,7 @@ def mission_by_id(mission_id):
 
 
 def public_step(step, hint_count=0):
-    private={"answer","answers","target","hints","example","explanation","rubric","clues","evidence_line"}
+    private={"answer","answers","target","hints","example","explanation","rubric","clues","evidence_line","accepted_patterns"}
     public = {key:value for key,value in step.items() if key not in private}
     if step.get("mode") == "vocabulary":
         public["clues"] = step["clues"][:min(1+hint_count,len(step["clues"]))]

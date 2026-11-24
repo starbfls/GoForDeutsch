@@ -1,6 +1,6 @@
 import { Check, Circle } from "lucide-react";
 export default function WritingFeedback({ assessment }) {
-  if (assessment?.kind !== "writing") return null;
+  if (assessment?.kind !== "writing" || assessment.status === "unconfirmed") return null;
   return (
     <div className="writing-feedback" aria-label="写作反馈">
       <div className="writing-stats">
