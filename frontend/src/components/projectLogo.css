@@ -1,0 +1,17 @@
+.project-logo {
+  display: block;
+  width: 144px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.adventure-sidebar .brand { justify-content: center; padding: 0; flex-shrink: 0; }
+.adventure-sidebar:has(.project-logo) nav { margin-top: 28px; }
+.auth-card > .project-logo { margin-bottom: 14px; }
+@media (max-width: 950px) {
+  .adventure-sidebar .brand .project-logo { width: 60px; height: 40px; border-radius: 6px; }
+}
+@media (max-width: 650px) {
+  .adventure-sidebar:has(.project-logo) nav { margin-top: 0; }
+}

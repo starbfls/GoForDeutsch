@@ -4,10 +4,10 @@ import {
   BookOpen,
   ClipboardList,
   Layers,
-  Leaf,
   Map,
   Settings2,
 } from "lucide-react";
+import ProjectLogo from "@/components/ProjectLogo";
 export default function AdventureSidebar({ game }) {
   const items = [
     ["town", Map, "学习地图", "地图"],
@@ -24,12 +24,7 @@ export default function AdventureSidebar({ game }) {
         onClick={() => game.navigate("town")}
         aria-label="GoForDeutsch 首页"
       >
-        <span className="brand-mark">
-          <Leaf size={26} />
-        </span>
-        <span>
-          GoFor<strong>Deutsch</strong>
-        </span>
+        <ProjectLogo />
       </button>
       <nav aria-label="主导航">
         {items.map(([id, Icon, label, short = label]) => (

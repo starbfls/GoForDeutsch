@@ -1,14 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Leaf, LoaderCircle } from "lucide-react";
+import { ArrowRight, LoaderCircle } from "lucide-react";
+import ProjectLogo from "@/components/ProjectLogo";
 import PasswordField from "./PasswordField";
 
 export default function AuthForm({ form }) {
   return (
     <section className="auth-card" aria-labelledby="auth-title">
-      <span className="auth-leaf">
-        <Leaf size={25} />
-      </span>
-      <div className="eyebrow">GoForDeutsch</div>
+      <ProjectLogo />
       <h2 id="auth-title">{form.registering ? "创建账号" : "登录"}</h2>
       <p>{form.registering ? "用户名自动生成。" : "使用你的德语用户名。"}</p>
       <form onSubmit={form.submit} aria-busy={form.busy}>

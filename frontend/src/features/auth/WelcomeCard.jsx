@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, Copy } from "lucide-react";
+import { ArrowRight, Copy } from "lucide-react";
 
+import ProjectLogo from "@/components/ProjectLogo";
 export default function WelcomeCard({ username }) {
   const [copyStatus, setCopyStatus] = useState("");
   const copy = async () => {
@@ -14,10 +15,7 @@ export default function WelcomeCard({ username }) {
   };
   return (
     <section className="auth-card welcome-card" aria-labelledby="welcome-title">
-      <span className="auth-leaf">
-        <Check size={25} />
-      </span>
-      <div className="eyebrow">GoForDeutsch</div>
+      <ProjectLogo />
       <h2 id="welcome-title">账号已创建</h2>
       <p>下次登录使用此用户名。</p>
       <div className="generated-username">

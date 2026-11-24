@@ -9,7 +9,7 @@ export default function WardrobeView({ game, shop = false }) {
   const act = async (id) => {
     const success = await (shop ? purchase(id) : equip(id));
     if (success) {
-      game.setToast(shop ? "服装已放入背包。" : "Mia 已换好服装。");
+      game.setToast(shop ? "服装已放入背包。" : "Mia 服装已更换。");
       if (shop) await game.load();
     }
   };
@@ -17,7 +17,7 @@ export default function WardrobeView({ game, shop = false }) {
     {error && <div className="connection-error" role="alert"><span>{error}</span><button onClick={refresh}>重试</button></div>}
     {shop && !inventory.shop_unlocked ? <section className="shop-locked">
       <LockKeyhole size={32} /><h2>完成服装店，开启商店</h2>
-      <p>服装店 {inventory.unlock_completed}/{inventory.unlock_total} · 通关获得粉格便服</p>
+      <p>服装店 {inventory.unlock_completed}/{inventory.unlock_total} · 通关获得粉格常服</p>
       <button className="primary-button" onClick={() => game.selectUnit("einkaufen")}>去服装店看看 <ArrowRight size={20} /></button>
     </section> : <>
       <div className="wardrobe-heading"><p><Shirt size={21} />{shop ? "用学习获得的金币，为 Mia 挑选服装。" : "选择服装，为 Mia 换装。"}</p>

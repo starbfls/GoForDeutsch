@@ -77,3 +77,18 @@ miaAppearance.js 的 OUTFIT_APPEARANCES 分别指定图集、显示比例和闭�
 成品：frontend/public/assets/characters/mia/casual-hoodie.png，1182×1330，RGBA透明，4列×3行。保留白色短袖连帽外套、深蓝条纹、红色格纹内搭、波点发结、蓝色发夹及蓝裙上缘，包含相同11种表情与闭眼帧。默认预览为smile，表情与随机眨眼使用现有组件。
 
 完整提示词：[asset-prompts-casual-hoodie.json](asset-prompts-casual-hoodie.json)。浏览器逐格预览：artifacts/mia-casual-hoodie-expressions.png；商店与背包：artifacts/hoodie-shop.png、hoodie-backpack.png。生成原件已移入D盘，用户Downloads中的参考图未修改。
+
+
+## 粉色开衫 · pink-cardigan
+
+参考用户 Mirain1.jpg，以现有连帽常服图集锁定角色脸型、画风与表情格子，由内置 image_gen 生成。保留粉色长袖开衫、黄色滚边和袖条、白衬衫领、细红领结、格纹裙上缘及粉色发饰。
+
+文件：frontend/public/assets/characters/mia/pink-cardigan.png，1182×1330，RGBA透明，4列×3行，相同11种表情和闭眼帧。商店价格240金币，购买后在背包选择，默认预览smile，保留随机眨眼与账号穿着保存。
+
+完整提示词：asset-prompts-pink-cardigan.json。浏览器逐格预览：artifacts/mia-pink-cardigan-expressions.png。用户原始JPG未修改，工具C盘生成原件已移至D盘。
+
+## 项目标识与 favicon
+
+直接使用 frontend/src/assets/logo.png 原图。ProjectLogo.jsx / projectLogo.css 组合共享的页面标识；侧栏、登录、注册和注册成功页使用同一图片。frontend/index.html 的 PNG favicon 引用同一源文件，Vite生产构建输出到 /assets/logo-内容哈希.png，现有FastAPI静态目录即可提供。不重新生成或改绘原logo，不额外复制一份到public。
+
+浏览器验证生产 favicon 的 PNG 类型、SHA-256 与原logo一致，以及页面图标和favicon实际URL相同。截图：artifacts/project-logo-map.png、project-logo-login.png、project-logo-register-mobile.png、project-logo-welcome.png。
